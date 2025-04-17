@@ -2,13 +2,14 @@ name: Bamba Availability Checker
 
 on:
   schedule:
-    # every hour on the hour UTC; script itself gates 07–23 AWST and +/-10 min
+    # Fires at minute 0 every hour UTC → your script adds a small jitter
     - cron: '0 * * * *'
   workflow_dispatch:
 
 jobs:
-  check_bamba:
+  check-bamba:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
 
@@ -17,28 +18,27 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install dependencies & Playwright
+      - name: Install deps & Playwright
         run: |
           pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install playwright cryptography
           playwright install chromium
 
-      - name: Run Checker
+      - name: Run Bamba Checker
         env:
           FERNET_KEY:  ${{ secrets.FERNET_KEY }}
+          SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+          SMTP_PORT:   ${{ secrets.SMTP_PORT }}
           SMTP_USER:   ${{ secrets.SMTP_USER }}
           SMTP_PASS:   ${{ secrets.SMTP_PASS }}
-          SMTP_SERVER: smtp.gmail.com
-          SMTP_PORT:   587
-          FROM_EMAIL:  ${{ secrets.SMTP_USER }}
+          FROM_EMAIL:  ${{ secrets.FROM_EMAIL }}
         run: python bamba_checker.py
 
-      - name: Upload artifacts
-        if: always()
+      - name: Upload Screenshots & History
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: bamba-output
           path: |
             coles_screenshots/
-            bamba_results/
             history.json
