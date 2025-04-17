@@ -5,10 +5,6 @@ from datetime import datetime
 # 1) List your stores here
 STORES = [
     {
-      "name": "Dianella",
-      "url":  "https://www.coles.com.au/find-stores/coles/wa/dianella-256"
-    },
-    {
       "name": "Mirrabooka",
       "url":  "https://www.coles.com.au/find-stores/coles/wa/mirrabooka-314"
     },
