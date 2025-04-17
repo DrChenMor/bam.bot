@@ -5,7 +5,7 @@ from datetime import datetime
 # ────────────────────────────────────────────────────────────────
 # PAGE CONFIG + GLOBAL CSS (Calibri font)
 # ────────────────────────────────────────────────────────────────
-st.set_page_config(page_title="Bamba Tracker", layout="wide")
+st.set_page_config(page_title="Bam.Bot - Bamba Tracker", layout="wide")
 st.markdown("""
   <style>
     * { font-family: 'Calibri', sans-serif !important; }
