@@ -34,8 +34,8 @@ with col_en:
     )
     st.header("🥜 Bam.Bot WA Availability Tracker Signup")
     st.markdown("""
-    **Immediate** → Email the second Bamba pops up in Coles Dianella or Coles Mirrabooka.  
-    **Daily summary** → One friendly recap at 15:00 AWST.  
+    **Immediate** - Email the second Bamba pops up in Coles Dianella or Coles Mirrabooka.  
+    **Daily summary** - One friendly recap at 15:00 AWST.  
 
     We keep your address **encrypted**—that means it’s locked away so only our bot can read it. 🔐
     """)
@@ -50,10 +50,10 @@ with col_he:
     st.markdown(
         """
         <div dir="rtl">
-        <b>במיידי</b> - שלח דחוף אימייל ברגע שאתה מזהה שיש במבה בסניף דיאנלה או מיררבוקה למה אני זקוק למנת בוטנים.  
-        <b>סיכום יומי</b> - סיכום פעם ביום שנייה לפני שאוספים את הילדים ב–15:00.  
+        <p><b>במיידי</b> – שלח דחוף אימייל ברגע שאתה מזהה שיש במבה בסניף דיאנלה או מיררבוקה למה אני זקוק למנת בוטנים.</p>
+        <p><b>סיכום יומי</b> – סיכום פעם ביום שנייה לפני שאוספים את הילדים ב–15:00.</p>
 
-        האימייל שלך **מוצפן** (הגנה מפני אנטישמיים מובטחת אלא אם הבוט שלנו יתאסלם).
+        האימייל שלך **מוצפן** - הגנה מפני אנטישמיים מובטחת אלא אם הבוט שלנו יתאסלם.
         </div>
         """,
         unsafe_allow_html=True,
