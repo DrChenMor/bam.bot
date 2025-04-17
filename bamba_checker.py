@@ -94,8 +94,9 @@ def check_store(store):
                         title = "Unknown Product"
 
                     # — b) Get the price
-                    if t.locator("span.price").count():
-                        price = t.locator("span.price").first.inner_text().strip()
+                    price_el = t.locator("span.price__value, span.price, [data-testid='product-pricing']")
+                    if price_el.count():
+                        price = price_el.first.inner_text().strip()
                     else:
                         price = "n/a"
 
