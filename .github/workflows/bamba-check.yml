@@ -1,5 +1,9 @@
 name: Bamba Availability Checker
 
+permissions:
+  contents: read
+  artifacts: write
+
 on:
   schedule:
     # This runs at random minutes past each hour from 7am to 10pm UTC+8 (Perth time)
@@ -32,9 +36,12 @@ jobs:
         run: python bamba_checker.py
         
       - name: Save results as artifacts
-        uses: actions/upload-artifact@v3
+        if: always()                # so you still get what ran even on failure
+        continue-on-error: true     # don’t block the rest of the workflow if upload fails
+        uses: actions/upload-artifact@v4
         with:
           name: bamba-results
           path: |
             coles_screenshots/
             bamba_results/
+
