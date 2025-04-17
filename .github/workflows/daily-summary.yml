@@ -1,0 +1,29 @@
+name: Bamba Daily Summary
+
+on:
+  schedule:
+    # 07:00 UTC = 15:00 AWST
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+
+jobs:
+  summary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Send daily summary
+        env:
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          FERNET_KEY:        ${{ secrets.FERNET_KEY }}
+        run: python daily_summary.py
