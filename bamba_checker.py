@@ -149,6 +149,38 @@ def run_all_checks():
     print(f"\n💾 Results saved to {out}")
     return results
 
+def append_to_history(run_results):
+    """
+    Keeps a master history.json of every run.
+    run_results: list of {store,timestamp,available,products}
+    """
+    hist_file = "history.json"
+    # Load or start fresh
+    if os.path.exists(hist_file):
+        history = json.load(open(hist_file))
+    else:
+        history = {"runs": []}
+
+    # Append this run as one entry
+    history["runs"].append(run_results)
+
+    # (Optional) keep only the last 30 runs
+    history["runs"] = history["runs"][-30:]
+
+    # Save back out
+    json.dump(history, open(hist_file, "w"), indent=2)
+
+# Modify your main loop: after run_all_checks(), call:
+if __name__=="__main__":
+    while True:
+        if within_hours(7,23):
+            results = run_all_checks()
+            append_to_history(results)
+        else:
+            print("⏰ Outside 07–23 AWST, skipping.")
+        sleep_secs = schedule_next_run()
+        time.sleep(sleep_secs)
+
 def within_hours(start=7, end=23):
     """Return True if current local hour is between start (inclusive) and end (exclusive)."""
     h = datetime.now().hour
