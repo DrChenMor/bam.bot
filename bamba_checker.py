@@ -5,7 +5,11 @@ One‑shot Bamba Availability Checker.
 – Scheduled by GitHub Actions cron.
 """
 
-import os, sys, time, random, json
+import os
+import sys
+import time
+import random
+import json
 from datetime import datetime
 from playwright.sync_api import sync_playwright
 from cryptography.fernet import Fernet
@@ -13,10 +17,14 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-# 1) Load & decrypt subscribers
+# ─────────────────────────────────────────────────────────────
+# 1) LOAD & DECRYPT SUBSCRIBERS
+# ─────────────────────────────────────────────────────────────
 FERNET_KEY = os.getenv("FERNET_KEY")
 if not FERNET_KEY:
-    print("⚠️ FERNET_KEY not set"); sys.exit(1)
+    print("⚠️ FERNET_KEY not set; exiting.")
+    sys.exit(1)
+
 fernet = Fernet(FERNET_KEY.encode())
 
 def load_subscribers():
@@ -33,34 +41,41 @@ def load_subscribers():
             pass
     return out
 
-# 2) SMTP helper
+# ─────────────────────────────────────────────────────────────
+# 2) SMTP EMAIL HELPER
+# ─────────────────────────────────────────────────────────────
 SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
 SMTP_PORT   = int(os.getenv("SMTP_PORT", "587"))
 SMTP_USER   = os.getenv("SMTP_USER")
 SMTP_PASS   = os.getenv("SMTP_PASS")
 FROM_EMAIL  = os.getenv("FROM_EMAIL", SMTP_USER)
 
-def send_email(to, subj, html):
+def send_email(to_email, subject, html_content):
     msg = MIMEMultipart("alternative")
-    msg["Subject"] = subj
+    msg["Subject"] = subject
     msg["From"]    = FROM_EMAIL
-    msg["To"]      = to
-    msg.attach(MIMEText(html, "html"))
-    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as s:
-        s.starttls()
-        s.login(SMTP_USER, SMTP_PASS)
-        s.sendmail(FROM_EMAIL, to, msg.as_string())
-    print(f"✉️ Sent to {to}")
+    msg["To"]      = to_email
+    msg.attach(MIMEText(html_content, "html"))
 
-# 3) Stores
+    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+        server.starttls()
+        server.login(SMTP_USER, SMTP_PASS)
+        server.send_message(msg)
+    print(f"  ✉️ Email sent to {to_email}")
+
+# ─────────────────────────────────────────────────────────────
+# 3) STORES
+# ─────────────────────────────────────────────────────────────
 STORES = [
-    {"name":"Dianella",   "url":"https://www.coles.com.au/find-stores/coles/wa/dianella-256"},
-    {"name":"Mirrabooka", "url":"https://www.coles.com.au/find-stores/coles/wa/mirrabooka-314"},
+    {"name": "Dianella",   "url": "https://www.coles.com.au/find-stores/coles/wa/dianella-256"},
+    {"name": "Mirrabooka", "url": "https://www.coles.com.au/find-stores/coles/wa/mirrabooka-421"},
 ]
 
-# 4) Scrape one store
-def human_delay(a=500,b=1500):
-    time.sleep(random.uniform(a/1000,b/1000))
+# ─────────────────────────────────────────────────────────────
+# 4) SCRAPING HELPERS
+# ─────────────────────────────────────────────────────────────
+def human_delay(a=500, b=1500):
+    time.sleep(random.uniform(a/1000, b/1000))
 
 def take_screenshot(page, store, step):
     folder = "coles_screenshots"
@@ -68,101 +83,134 @@ def take_screenshot(page, store, step):
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     path = f"{folder}/{store}_{step}_{ts}.png"
     page.screenshot(path=path)
-    print("📸", path)
+    print(f"  📸 {path}")
 
 def check_store(store):
-    print(f"\n🔄 Checking {store['name']}…")
-    res = {"store":store["name"],
-           "timestamp":datetime.now().isoformat(),
-           "available":False,
-           "products":[]}
+    print(f"\n🔄 Checking {store['name']} at {datetime.now().strftime('%H:%M:%S')}…")
+    result = {
+        "store": store["name"],
+        "timestamp": datetime.now().isoformat(),
+        "available": False,
+        "products": []
+    }
+
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
-        page.add_init_script("Object.defineProperty(navigator,'webdriver',{get:()=>undefined})")
+        browser = p.chromium.launch(headless=True, slow_mo=50)
+        ctx = browser.new_context(viewport={"width":1280, "height":920}, locale="en-US")
+        page = ctx.new_page()
+        page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get:() => undefined})")
 
         try:
-            # 1) Set location
+            # Step 1: Open store page & set location
             page.goto(store["url"], timeout=60000)
             take_screenshot(page, store["name"], "1_store")
             page.wait_for_selector("text=Set location", timeout=10000)
-            human_delay(); page.click("text=Set location")
-            human_delay(); take_screenshot(page, store["name"], "2_loc")
+            human_delay()
+            page.click("text=Set location")
+            human_delay()
+            take_screenshot(page, store["name"], "2_loc")
 
-            # 2) Homepage + cookies
+            # Step 2: Go home & accept cookies
             page.goto("https://www.coles.com.au", timeout=60000)
-            try: page.click("button:has-text('Accept All Cookies')", timeout=5000)
-            except: pass
+            try:
+                page.click("button:has-text('Accept All Cookies')", timeout=5000)
+            except:
+                pass
             take_screenshot(page, store["name"], "3_home")
 
-            # 3) Search “bamba”
+            # Step 3: Search “bamba”
             page.fill("input[placeholder*='Search']", "bamba")
-            human_delay(); page.click("div[role='option']")
+            human_delay()
+            page.click("div[role='option']")
             page.wait_for_url("**/search/products**", timeout=15000)
-            human_delay(); take_screenshot(page, store["name"], "4_res")
+            human_delay()
+            take_screenshot(page, store["name"], "4_res")
 
-            # 4) Scrape tiles
+            # Step 4: Scrape product tiles
+            page.wait_for_selector("[data-testid='product-tiles']", timeout=15000)
             tiles = page.locator("section[data-testid='product-tile']").all()
             if not tiles:
-                print("❓ No tiles")
+                print("  ❓ No product tiles found!")
             else:
                 for t in tiles:
-                    te = t.locator("h2.product__title, h3")
-                    title = te.first.inner_text().strip() if te.count() else "Unknown"
-                    pe = t.locator("span.price__value, span.price, [data-testid='product-pricing']")
-                    price = pe.first.inner_text().strip() if pe.count() else "n/a"
+                    # Title (h2 then h3 fallback)
+                    title_el = t.locator("h2.product__title, h3")
+                    title = title_el.first.inner_text().strip() if title_el.count() else "Unknown"
+
+                    # Price
+                    price_el = t.locator("span.price__value, span.price, [data-testid='product-pricing']")
+                    price = price_el.first.inner_text().strip() if price_el.count() else "n/a"
+
+                    # Availability
                     unavailable = t.locator(
                         "[data-testid='large-screen-currently-unavailable-prompt']"
                     ).count() > 0
-                    ok = not unavailable
-                    mark = "✅" if ok else "❌"
-                    res["products"].append({"name":title,"price":price,"available":ok})
-                    if ok: 
-                        res["available"] = True
-                    print(f"{mark} {title} @ {price}")
+                    available = not unavailable
+                    mark = "✅" if available else "❌"
+
+                    result["products"].append({
+                        "name": title,
+                        "price": price,
+                        "available": available
+                    })
+                    if available:
+                        result["available"] = True
+
+                    print(f"  {mark} {title} @ {price}")
+
         except Exception as e:
-            print("⚠️", e)
+            print(f"  ⚠️ Error: {e}")
             take_screenshot(page, store["name"], "error")
+
         finally:
             browser.close()
+            print(f"  🧹 Closed browser for {store['name']}")
 
-    return res
+    return result
 
-# 5) Append history
-def append_history(runs):
+# ─────────────────────────────────────────────────────────────
+# 5) APPEND TO HISTORY
+# ─────────────────────────────────────────────────────────────
+def append_history(results):
     hf = "history.json"
-    hist = {"runs": []}
+    history = {"runs": []}
     if os.path.exists(hf):
-        hist = json.load(open(hf))
-    hist["runs"].append(runs)
-    hist["runs"] = hist["runs"][-30:]
-    json.dump(hist, open(hf,"w"), indent=2)
+        history = json.load(open(hf))
+    history["runs"].append(results)
+    history["runs"] = history["runs"][-30:]
+    json.dump(history, open(hf, "w"), indent=2)
 
-# 6) Main
+# ─────────────────────────────────────────────────────────────
+# 6) MAIN ENTRYPOINT
+# ─────────────────────────────────────────────────────────────
 def main():
-    # optional jitter 0–5 min so your runs aren’t always exactly on the hour
-    time.sleep(random.uniform(0,300))
+    # optional startup jitter (0–300 s)
+    time.sleep(random.uniform(0, 300))
 
-    subs = load_subscribers()
-    allr = []
+    subscribers = load_subscribers()
+    all_results = []
+
     for store in STORES:
-        r = check_store(store)
-        allr.append(r)
-         if r["available"]:
-             for u in subs:
-                  if u["mode"]=="immediate":
-                         # Funny email
-                         sub=f"🎉 Bamba Alert: {r['store']} has snacks!"
-                         body=(
-                           f"<h1>Holy Peanut! 🌰</h1>"
-                           f"<p>Bamba is in stock at <b>{r['store']}</b> "
-                           f"as of {r['timestamp'].split('T')[1][:8]} AWST.</p>"
-                           "<p>From your neighborhood BamBot</p>"
-                         )
-                         send_email(u["email"], sub, body)
-        time.sleep(random.uniform(120,300))  # 2–5 min between stores
-    append_history(allr)
-    print("✅ Done – exiting.")
+        res = check_store(store)
+        all_results.append(res)
 
-if __name__=="__main__":
+        if res["available"]:
+            for u in subscribers:
+                if u["mode"] == "immediate":
+                    subject = f"🎉 Bamba Alert: {res['store']} is stocked!"
+                    body = (
+                        f"<h1>Holy Peanut! 🌰</h1>"
+                        f"<p>Bamba is available at <b>{res['store']}</b> "
+                        f"as of {res['timestamp'].split('T')[1][:8]} AWST.</p>"
+                        "<p>Time to snack! 🤖</p>"
+                    )
+                    send_email(u["email"], subject, body)
+
+        # short pause between stores
+        time.sleep(random.uniform(120, 300))
+
+    append_history(all_results)
+    print("\n✅ Run complete; exiting.")
+
+if __name__ == "__main__":
     main()
