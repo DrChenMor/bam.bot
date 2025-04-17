@@ -1,11 +1,11 @@
 {
   "users": [
     {
-      "email": "alice@example.com",
+      "token": "gAAAAABlY...<snip>...7hD8=",
       "mode":  "immediate"
     },
     {
-      "email": "bob@example.com",
+      "token": "gAAAAABlZ...<snip>...9JkQ=",
       "mode":  "daily"
     }
   ]
