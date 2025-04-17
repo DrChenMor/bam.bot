@@ -10,7 +10,7 @@ STORES = [
     },
     {
       "name": "Mirrabooka",
-      "url":  "https://www.coles.com.au/find-stores/coles/wa/mirrabooka-421"
+      "url":  "https://www.coles.com.au/find-stores/coles/wa/mirrabooka-314"
     },
     # add more stores as you like
 ]
