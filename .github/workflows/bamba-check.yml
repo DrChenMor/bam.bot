@@ -1,4 +1,4 @@
-name: Bamba Availability Checker
+name: 🥜 Bamba Availability Checker
 
 on:
   schedule:
@@ -9,22 +9,20 @@ on:
 jobs:
   check-bamba:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
-          # allow pushing commits back
           persist-credentials: true
           fetch-depth: 0
 
-      - name: Set up Python & Playwright
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      - run: |
-          pip install --upgrade pip
-          pip install playwright cryptography
+
+      - name: Install dependencies & Playwright
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
           playwright install chromium
 
       - name: Run Bamba checker
@@ -37,15 +35,15 @@ jobs:
           FROM_EMAIL:  ${{ secrets.FROM_EMAIL }}
         run: python bamba_checker.py
 
-      - name: Commit updated history.json
+      - name: Commit history.json
         run: |
-          git config user.name "github-actions[bot]"
+          git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add history.json
-          git commit -m "Update history.json" || echo "No changes to commit"
+          git commit -m "Update history.json" || echo "No history changes"
           git push
 
-      - name: Upload Screenshots & History
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
