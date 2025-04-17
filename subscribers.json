@@ -1,12 +1,1 @@
-{
-  "users": [
-    {
-      "token": "gAAAAABlY...<snip>...7hD8=",
-      "mode":  "immediate"
-    },
-    {
-      "token": "gAAAAABlZ...<snip>...9JkQ=",
-      "mode":  "daily"
-    }
-  ]
-}
+{ "users": [] }
