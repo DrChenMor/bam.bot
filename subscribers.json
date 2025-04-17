@@ -1,0 +1,12 @@
+{
+  "users": [
+    {
+      "email": "alice@example.com",
+      "mode":  "immediate"
+    },
+    {
+      "email": "bob@example.com",
+      "mode":  "daily"
+    }
+  ]
+}
