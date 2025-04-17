@@ -1,4 +1,4 @@
-name: Bamba Daily Summary
+name: Bamba Daily Summary Email
 
 on:
   schedule:
