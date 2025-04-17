@@ -5,6 +5,8 @@ import os
 import random
 import json
 
+os.makedirs("coles_screenshots", exist_ok=True)
+os.makedirs("bamba_results", exist_ok=True)
 # Store configuration - add more stores as needed
 STORES = [
     {"name": "Dianella", "id": "256", "url": "https://www.coles.com.au/find-stores/coles/wa/dianella-256"},
