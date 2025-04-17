@@ -1,9 +1,5 @@
 name: Bamba Availability Checker
 
-permissions:
-  contents: read
-  artifacts: write
-
 on:
   schedule:
     # This runs at random minutes past each hour from 7am to 10pm UTC+8 (Perth time)
