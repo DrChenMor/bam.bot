@@ -1,130 +1,108 @@
 #!/usr/bin/env python3
 """
-bamba_checker.py
+Hourly Bamba Checker with SMTP‑email notifications.
 
-– Runs once each hour ±10 minutes  
-– Only between 07:00–23:00 AWST  
-– Scrapes multiple Coles stores for Bamba availability  
-– Sends a funny immediate email to encrypted-subscriber emails  
-– Appends each run to history.json for daily summaries
+– Scrapes each store once/hour ±10 min between 07–23 AWST
+– Sends immediate “funny” email via SMTP to encrypted subscribers
+– Appends each run to history.json
 """
 
-import os
-import sys
-import time
-import random
-import json
+import os, sys, time, random, json
 from datetime import datetime, timedelta
-
 from playwright.sync_api import sync_playwright
 from cryptography.fernet import Fernet
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
-# ─────────────────────────────────────────────────────────────
-# 1) SETUP ENCRYPTION FOR SUBSCRIBERS
-# ─────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────
+# 1) LOAD & DECRYPT SUBSCRIBERS
+# ────────────────────────────────────────────────────────────
 FERNET_KEY = os.getenv("FERNET_KEY")
 if not FERNET_KEY:
-    print("⚠️ FERNET_KEY not set. Exiting.")
-    sys.exit(1)
-
-fernet = Fernet(FERNET_KEY.encode())
+    print("⚠️ FERNET_KEY not set. Exiting."); sys.exit(1)
+f = Fernet(FERNET_KEY.encode())
 
 def load_subscribers():
-    """Load and decrypt subscribers from subscribers.json."""
-    subs = []
+    out = []
     try:
         data = json.load(open("subscribers.json"))
     except FileNotFoundError:
-        return subs
+        return out
     for u in data.get("users", []):
         try:
-            email = fernet.decrypt(u["token"].encode()).decode()
-            subs.append({"email": email, "mode": u["mode"]})
-        except Exception as e:
-            print(f"⚠️ Failed to decrypt subscriber token: {e}")
-    return subs
+            email = f.decrypt(u["token"].encode()).decode()
+            out.append({"email": email, "mode": u["mode"]})
+        except:
+            pass
+    return out
 
-# ─────────────────────────────────────────────────────────────
-# 2) SENDGRID EMAIL HELPER
-# ─────────────────────────────────────────────────────────────
-def notify_email(to_email, subject, html_content):
-    """Send an email via SendGrid."""
-    msg = Mail(
-        from_email="noreply@bambabot.com",
-        to_emails=to_email,
-        subject=subject,
-        html_content=html_content
-    )
-    sg = SendGridAPIClient(os.getenv("SENDGRID_API_KEY"))
-    response = sg.send(msg)
-    print(f"  ✉️ Sent ({response.status_code}) to {to_email}")
+# ────────────────────────────────────────────────────────────
+# 2) SMTP HELPER
+# ────────────────────────────────────────────────────────────
+SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+SMTP_PORT   = int(os.getenv("SMTP_PORT", "587"))
+SMTP_USER   = os.getenv("SMTP_USER")
+SMTP_PASS   = os.getenv("SMTP_PASS")
+FROM_EMAIL  = os.getenv("FROM_EMAIL", SMTP_USER)
 
-# ─────────────────────────────────────────────────────────────
-# 3) CONFIGURE YOUR STORES
-# ─────────────────────────────────────────────────────────────
+def send_email(to_email, subject, html_content):
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"]    = FROM_EMAIL
+    msg["To"]      = to_email
+    msg.attach(MIMEText(html_content, "html"))
+
+    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as s:
+        s.starttls()
+        s.login(SMTP_USER, SMTP_PASS)
+        s.sendmail(FROM_EMAIL, to_email, msg.as_string())
+    print(f"  ✉️ Email sent to {to_email}")
+
+# ────────────────────────────────────────────────────────────
+# 3) STORES & SCHEDULING
+# ────────────────────────────────────────────────────────────
 STORES = [
-    {"name": "Dianella",   "url": "https://www.coles.com.au/find-stores/coles/wa/dianella-256"},
-    {"name": "Mirrabooka", "url": "https://www.coles.com.au/find-stores/coles/wa/mirrabooka-314"},
-    # add more stores here if you like
+    {"name":"Dianella",   "url":"https://www.coles.com.au/find-stores/coles/wa/dianella-256"},
+    {"name":"Mirrabooka", "url":"https://www.coles.com.au/find-stores/coles/wa/mirrabooka-421"},
 ]
 
-# ─────────────────────────────────────────────────────────────
-# 4) TIME & SCHEDULING UTILS
-# ─────────────────────────────────────────────────────────────
 def within_hours(start=7, end=23):
-    """Return True if current hour is between start (inclusive) and end (exclusive)."""
     h = datetime.now().hour
     return start <= h < end
 
-def schedule_next_run():
-    """
-    Compute seconds until the next "hour ±10 min" run.
-    E.g. if it's 07:25, schedule between 08:00 ±10 min.
-    """
+def next_sleep():
     now    = datetime.now()
-    next_hr = now.replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
-    offset  = random.uniform(-10, 10)  # ±10 minutes
-    run_at  = next_hr + timedelta(minutes=offset)
-    delta   = (run_at - now).total_seconds()
-    if delta < 0:
-        delta = 60
-    print(f"\n⏱️ Next run at ~{run_at.strftime('%H:%M:%S')} (in {delta/60:.1f} min)")
-    return delta
+    next_h = now.replace(minute=0,second=0,microsecond=0) + timedelta(hours=1)
+    off    = random.uniform(-10,10)  # ±10 min
+    run_at = next_h + timedelta(minutes=off)
+    secs   = (run_at-now).total_seconds()
+    if secs<0: secs=60
+    print(f"\n⏱️ Next run ~{run_at.strftime('%H:%M:%S')} (in {secs/60:.1f} min)")
+    return secs
 
-# ─────────────────────────────────────────────────────────────
-# 5) BROWSER / SCRAPE HELPERS
-# ─────────────────────────────────────────────────────────────
-def human_delay(min_ms=500, max_ms=1500):
-    """Small random pause to mimic a human user."""
-    time.sleep(random.uniform(min_ms/1000, max_ms/1000))
+# ────────────────────────────────────────────────────────────
+# 4) SCRAPING HELPERS
+# ────────────────────────────────────────────────────────────
+def human_delay(a=500,b=1500):
+    time.sleep(random.uniform(a/1000,b/1000))
 
-def take_screenshot(page, store, step):
-    """Save a screenshot under coles_screenshots/{store}_{step}_{timestamp}.png."""
-    folder = "coles_screenshots"
-    os.makedirs(folder, exist_ok=True)
-    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    path = f"{folder}/{store}_{step}_{ts}.png"
-    page.screenshot(path=path)
-    print(f"  📸 {path}")
+def take_screenshot(page,store,step):
+    d="coles_screenshots"; os.makedirs(d,exist_ok=True)
+    ts=datetime.now().strftime("%Y%m%d_%H%M%S")
+    path=f"{d}/{store}_{step}_{ts}.png"
+    page.screenshot(path=path); print("  📸",path)
 
 def check_store(store):
-    """
-    Open a headless browser, set the store location, search 'bamba',
-    scrape each product tile, and return a dict of results.
-    """
     print(f"\n🔄 Checking {store['name']} at {datetime.now().strftime('%H:%M:%S')}…")
-    result = {
-        "store":     store["name"],
-        "timestamp": datetime.now().isoformat(),
-        "available": False,
-        "products":  []
-    }
+    res={"store":store["name"],
+         "timestamp":datetime.now().isoformat(),
+         "available":False,
+         "products":[]}
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True, slow_mo=100)
-        ctx = browser.new_context(
+        browser=p.chromium.launch(headless=True,slow_mo=100)
+        ctx=browser.new_context(
             viewport={"width":1280,"height":920},
             locale="en-US",
             user_agent=(
@@ -133,125 +111,95 @@ def check_store(store):
                 " Chrome/120.0.0.0 Safari/537.36"
             )
         )
-        page = ctx.new_page()
+        page=ctx.new_page()
         page.add_init_script("Object.defineProperty(navigator,'webdriver',{get:()=>undefined})")
 
         try:
-            # Step 1: Open store page & click 'Set location'
-            page.goto(store["url"], timeout=60000)
-            take_screenshot(page, store["name"], "1_store_page")
-            page.wait_for_selector("text=Set location", timeout=10000)
+            # 1) Store → set location
+            page.goto(store["url"],timeout=60000)
+            take_screenshot(page,store["name"],"1_store")
+            page.wait_for_selector("text=Set location",timeout=10000)
             human_delay(); page.click("text=Set location")
-            human_delay(); take_screenshot(page, store["name"], "2_location_set")
+            human_delay(); take_screenshot(page,store["name"],"2_loc")
 
-            # Step 2: Go to homepage & accept cookies
-            page.goto("https://www.coles.com.au", timeout=60000)
-            try:
-                page.click("button:has-text('Accept All Cookies')", timeout=5000)
-            except:
-                pass
-            take_screenshot(page, store["name"], "3_homepage")
+            # 2) Homepage → accept cookies
+            page.goto("https://www.coles.com.au",timeout=60000)
+            try: page.click("button:has-text('Accept All Cookies')",timeout=5000)
+            except: pass
+            take_screenshot(page,store["name"],"3_home")
 
-            # Step 3: Search for 'bamba'
-            page.fill("input[placeholder*='Search']", "bamba")
-            human_delay()
-            page.click("div[role='option']")
-            page.wait_for_url("**/search/products**", timeout=15000)
-            human_delay(); take_screenshot(page, store["name"], "4_results")
+            # 3) Search “bamba”
+            page.fill("input[placeholder*='Search']","bamba")
+            human_delay(); page.click("div[role='option']")
+            page.wait_for_url("**/search/products**",timeout=15000)
+            human_delay(); take_screenshot(page,store["name"],"4_res")
 
-            # Step 4: Scrape each product tile
-            page.wait_for_selector("[data-testid='product-tiles']", timeout=15000)
-            tiles = page.locator("section[data-testid='product-tile']").all()
-
+            # 4) Scrape tiles
+            page.wait_for_selector("[data-testid='product-tiles']",timeout=15000)
+            tiles=page.locator("section[data-testid='product-tile']").all()
             if not tiles:
-                print("  ❓ No product tiles found!")
+                print("  ❓ No tiles!")
             else:
-                for tile in tiles:
-                    # a) Title: try H2.product__title, then fallback to H3
-                    te = tile.locator("h2.product__title, h3")
-                    title = te.first.inner_text().strip() if te.count() else "Unknown Product"
-
-                    # b) Price: new or old selector
-                    pe = tile.locator("span.price__value, span.price, [data-testid='product-pricing']")
-                    price = pe.first.inner_text().strip() if pe.count() else "n/a"
-
-                    # c) Availability: look for 'Currently unavailable'
-                    unavailable = tile.locator(
-                        "[data-testid='large-screen-currently-unavailable-prompt']"
-                    ).count() > 0
-                    available = not unavailable
-                    mark = "✅" if available else "❌"
-
-                    result["products"].append({
-                        "name":      title,
-                        "price":     price,
-                        "available": available
-                    })
-                    if available:
-                        result["available"] = True
-
+                for t in tiles:
+                    te=t.locator("h2.product__title, h3")
+                    title=te.first.inner_text().strip() if te.count() else "Unknown"
+                    pe=t.locator("span.price__value, span.price, [data-testid='product-pricing']")
+                    price=pe.first.inner_text().strip() if pe.count() else "n/a"
+                    un=t.locator("[data-testid='large-screen-currently-unavailable-prompt']").count()>0
+                    ok=not un
+                    mark="✅" if ok else "❌"
+                    res["products"].append({"name":title,"price":price,"available":ok})
+                    if ok: res["available"]=True
                     print(f"  {mark} {title} @ {price}")
 
         except Exception as e:
-            print(f"  ⚠️ Error: {e}")
-            take_screenshot(page, store["name"], "error")
-
+            print("  ⚠️ Error:",e)
+            take_screenshot(page,store["name"],"error")
         finally:
             browser.close()
-            print(f"  🧹 Closed browser for {store['name']}")
+            print(f"  🧹 Closed {store['name']}")
 
-    return result
+    return res
 
-# ─────────────────────────────────────────────────────────────
-# 6) APPEND TO HISTORY
-# ─────────────────────────────────────────────────────────────
-def append_history(results):
-    """Append this run's results to history.json, keeping last 30 runs."""
-    hist_file = "history.json"
-    if os.path.exists(hist_file):
-        history = json.load(open(hist_file))
-    else:
-        history = {"runs": []}
-    history["runs"].append(results)
-    history["runs"] = history["runs"][-30:]
-    json.dump(history, open(hist_file, "w"), indent=2)
+# ────────────────────────────────────────────────────────────
+# 5) HISTORY
+# ────────────────────────────────────────────────────────────
+def append_history(runs):
+    hf="history.json"
+    hist={"runs":[]}
+    if os.path.exists(hf):
+        hist=json.load(open(hf))
+    hist["runs"].append(runs)
+    hist["runs"]=hist["runs"][-30:]
+    json.dump(hist,open(hf,"w"),indent=2)
 
-# ─────────────────────────────────────────────────────────────
-# 7) MAIN LOOP
-# ─────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────
+# 6) MAIN LOOP
+# ────────────────────────────────────────────────────────────
 def main():
     while True:
-        # Only scrape during operating hours
         if within_hours(7,23):
-            subscribers = load_subscribers()
-            run_results = []
-            for store in STORES:
-                res = check_store(store)
-                run_results.append(res)
-                # Send immediate emails for available stores
-                if res["available"]:
-                    for u in subscribers:
-                        if u["mode"] == "immediate":
-                            # —— FUNNY EMAIL CONTENT ——  
-                            subject = f"🎉 Bamba Alert: {res['store']} is snack-time heaven!"
-                            body    = (
-                                f"<h1>Holy Peanut! 🌰</h1>"
-                                f"<p>Bamba is IN STOCK at <b>{res['store']}</b> as of "
-                                f"{res['timestamp'].split('T')[1][:8]} AWST.</p>"
-                                f"<p>Ready… set… snack! 🤖</p>"
+            subs=load_subscribers()
+            allr=[]
+            for s in STORES:
+                r=check_store(s); allr.append(r)
+                if r["available"]:
+                    for u in subs:
+                        if u["mode"]=="immediate":
+                            # Funny email
+                            sub=f"🎉 Bamba Alert: {r['store']} has snacks!"
+                            body=(
+                              f"<h1>Yum! 🌰</h1>"
+                              f"<p>Bamba is in stock at <b>{r['store']}</b> "
+                              f"as of {r['timestamp'].split('T')[1][:8]} AWST.</p>"
+                              "<p>Snack time! 🤖</p>"
                             )
-                            notify_email(u["email"], subject, body)
-                # Delay 2–5 min before next store
-                time.sleep(random.uniform(2,5) * 60)
-
-            # Record history for daily summary
-            append_history(run_results)
-
+                            send_email(u["email"], sub, body)
+                time.sleep(random.uniform(2,5)*60)
+            append_history(allr)
         else:
-            print(f"⏰ Now {datetime.now().hour}:00 — outside 07–23 AWST, skipping.")
+            print(f"⏰ {datetime.now().hour}:00 — outside 07–23 AWST, skipping.")
+        time.sleep(next_sleep())
 
-        # Sleep until next hour ±10 min
-        time.sleep(schedule_next_run())
-
-if __name__ == "__main__":
+if __name__=="__main__":
     main()
