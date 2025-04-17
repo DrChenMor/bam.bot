@@ -22,8 +22,12 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Send daily summary
+      - name: Run Daily Summary
         env:
-          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
-          FERNET_KEY:        ${{ secrets.FERNET_KEY }}
+          FERNET_KEY:  ${{ secrets.FERNET_KEY }}
+          SMTP_USER:   ${{ secrets.SMTP_USER }}
+          SMTP_PASS:   ${{ secrets.SMTP_PASS }}
+          SMTP_SERVER: smtp.gmail.com
+          SMTP_PORT:   587
+          FROM_EMAIL:  ${{ secrets.SMTP_USER }}
         run: python daily_summary.py
