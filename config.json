@@ -1,7 +1,7 @@
 {
   "stores": [
     {"name": "Dianella", "id": "256", "url": "https://www.coles.com.au/find-stores/coles/wa/dianella-256"},
-    {"name": "Mirrabooka", "id": "421", "url": "https://www.coles.com.au/find-stores/coles/wa/mirrabooka-421"}
+    {"name": "Mirrabooka", "id": "314", "url": "https://www.coles.com.au/find-stores/coles/wa/mirrabooka-314"}
   ],
   "check_interval_minutes": 90,
   "operating_hours": {
