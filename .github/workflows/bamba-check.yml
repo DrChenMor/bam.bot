@@ -2,7 +2,7 @@ name: Bamba Availability Checker
 
 on:
   schedule:
-    # Fires at minute 0 every hour UTC → your script adds a small jitter
+    # every hour on the hour UTC
     - cron: '0 * * * *'
   workflow_dispatch:
 
@@ -11,20 +11,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          # allow pushing commits back
+          persist-credentials: true
+          fetch-depth: 0
 
-      - name: Set up Python
+      - name: Set up Python & Playwright
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-
-      - name: Install deps & Playwright
-        run: |
+      - run: |
           pip install --upgrade pip
           pip install playwright cryptography
           playwright install chromium
 
-      - name: Run Bamba Checker
+      - name: Run Bamba checker
         env:
           FERNET_KEY:  ${{ secrets.FERNET_KEY }}
           SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
@@ -33,6 +36,14 @@ jobs:
           SMTP_PASS:   ${{ secrets.SMTP_PASS }}
           FROM_EMAIL:  ${{ secrets.FROM_EMAIL }}
         run: python bamba_checker.py
+
+      - name: Commit updated history.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add history.json
+          git commit -m "Update history.json" || echo "No changes to commit"
+          git push
 
       - name: Upload Screenshots & History
         uses: actions/upload-artifact@v4
