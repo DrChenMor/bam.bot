@@ -1,32 +1,30 @@
+# .github/workflows/daily-summary.yml
 name: Bamba Daily Summary Email
 
 on:
   schedule:
-    # 07:00 UTC = 15:00 AWST
+    # every day at 07:00 UTC (15:00 AWST)
     - cron: '0 7 * * *'
   workflow_dispatch:
 
 jobs:
-  summary:
+  send_summary:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out code (includes history.json)
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
-        with: python-version: '3.10'
+        with:
+          python-version: '3.10'
 
-      - name: Install crypto lib
-        run: pip install cryptography
+      - name: Install dependencies
+        run: pip install sendgrid
 
-      - name: Send daily summary
+      - name: Send Daily Summary
         env:
-          FERNET_KEY:  ${{ secrets.FERNET_KEY }}
-          SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
-          SMTP_PORT:   ${{ secrets.SMTP_PORT }}
-          SMTP_USER:   ${{ secrets.SMTP_USER }}
-          SMTP_PASS:   ${{ secrets.SMTP_PASS }}
-          FROM_EMAIL:  ${{ secrets.FROM_EMAIL }}
+          FERNET_KEY: ${{ secrets.FERNET_KEY }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
         run: python daily_summary.py
