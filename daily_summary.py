@@ -5,8 +5,8 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-# ── Setup ─────────────────────────────────────────────────
-FERNET_KEY = os.getenv("FERNET_KEY", "")
+# ─── SETUP ───────────────────────────────────────────────────
+FERNET_KEY = os.getenv("FERNET_KEY")
 if not FERNET_KEY:
     print("⚠️ FERNET_KEY missing"); exit(1)
 f = Fernet(FERNET_KEY.encode())
@@ -23,18 +23,16 @@ def send_email(to, subj, html):
     msg["From"]    = FROM_EMAIL
     msg["To"]      = to
     msg.attach(MIMEText(html, "html"))
-
     with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as s:
         s.starttls()
         s.login(SMTP_USER, SMTP_PASS)
         s.sendmail(FROM_EMAIL, to, msg.as_string())
     print("✉️ Sent to", to)
 
-# ── Build daily summary ────────────────────────────────────
+# ─── BUILD SUMMARY ───────────────────────────────────────────
 hist = json.load(open("history.json"))
 today = date.today().isoformat()
-
-runs = [r for r in hist["runs"] if r and r[0]["timestamp"].startswith(today)]
+runs  = [r for r in hist["runs"] if r and r[0]["timestamp"].startswith(today)]
 if not runs:
     print("No runs today."); exit(0)
 
@@ -48,10 +46,10 @@ for run in runs:
     html += "</ul>"
 html += "<p>That's all for today! Keep it nutty 🤪</p>"
 
-# ── Send to daily subscribers ──────────────────────────────
+# ─── EMAIL DAILY SUBSCRIBERS ─────────────────────────────────
 subs = json.load(open("subscribers.json"))["users"]
 for u in subs:
-    if u["mode"] == "daily":
+    if u["mode"]=="daily":
         try:
             email = f.decrypt(u["token"].encode()).decode()
         except:
