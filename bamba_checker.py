@@ -189,10 +189,10 @@ def main():
                             # Funny email
                             sub=f"🎉 Bamba Alert: {r['store']} has snacks!"
                             body=(
-                              f"<h1>Yum! 🌰</h1>"
+                              f"<h1>Holy Peanut! 🌰</h1>"
                               f"<p>Bamba is in stock at <b>{r['store']}</b> "
                               f"as of {r['timestamp'].split('T')[1][:8]} AWST.</p>"
-                              "<p>Snack time! 🤖</p>"
+                              "<p>From your neighborhood BamBot</p>"
                             )
                             send_email(u["email"], sub, body)
                 time.sleep(random.uniform(2,5)*60)
