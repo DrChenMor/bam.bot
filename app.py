@@ -116,9 +116,9 @@ with col_he:
 
 # Create columns to center the form elements
 col1, col2, col3 = st.columns([1, 3, 1])
-st.subheader("Subscribe for Bamba Alerts")
 
 with col2:
+    st.subheader("Subscribe for Bamba Alerts")
     mode = st.radio(
         "Notify me when / הודיעו לי כאשר:",
         ["Immediate / במיידי", "Daily summary / סיכום פעם ביום"]
