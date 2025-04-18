@@ -39,15 +39,17 @@ with col_en:
     """)
 
 with col_he:
-    st.markdown("""
+    st.markdown("<h2 dir='rtl'>🥜 הרשמה למעקב במבה – במבוט WA</h2>", unsafe_allow_html=True)
+    st.markdown(
+        """
         <div dir="rtl">
         <p><b>במיידי</b> – שלח דחוף אימייל ברגע שאתה מזהה שיש במבה בסניף דיאנלה או מיררבוקה למה אני זקוק למנת בוטנים.</p>
         <p><b>סיכום יומי</b> – סיכום פעם ביום שנייה לפני שאוספים את הילדים ב–15:00.</p>
         <p>האימייל שלך <b>מוצפן</b> – הגנה מפני אנטישמיים מובטחת, אלא אם הבוט שלנו יתאסלם.</p>
         </div>
-    """, unsafe_allow_html=True)
-
-st.markdown("---")
+        """,
+        unsafe_allow_html=True,
+    )
 
 # ─── SUBSCRIPTION FORM ───────────────────────────────────────
 mode = st.radio(
