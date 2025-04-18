@@ -207,8 +207,7 @@ with col2:
                         st.success("🎉 You're signed up! Check your inbox soon.")
             except Exception as e:
                 st.error(f"Subscription error: {str(e)}")
-st.markdown('</div>', unsafe_allow_html=True)
-
+                
 st.markdown("---")
 
 # ─── IMPROVED LATEST STATUS ─────────────────────────────────
@@ -220,8 +219,9 @@ try:
     latest = hist[-1]
     
     # Format timestamp for better readability
-    ts = latest[0]["timestamp"].replace("T", " ").split(".")[0]
-    st.write(f"### Last checked at {ts} AWST")
+    ts_raw = latest[0]["timestamp"]
+    ts = format_awst_time(ts_raw)
+    st.write(f"### Last checked at {ts}")
     
     # Create columns for stores
     columns = st.columns(len(latest))
