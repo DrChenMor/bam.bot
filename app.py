@@ -1,6 +1,7 @@
 import os, json, streamlit as st
 from cryptography.fernet import Fernet
 from datetime import datetime
+import pytz  # Add this import - it was missing before
 
 def format_awst_time(timestamp_str):
     """Convert any timestamp to AWST formatted time."""
@@ -24,6 +25,18 @@ st.set_page_config(
     layout="centered",
     page_icon="bamlogo.png"
 )
+
+# Try to import Supabase client
+try:
+    from supabase_client import add_subscriber, get_subscribers
+    use_supabase = True
+    st.sidebar.success("✅ Supabase connected")
+except ImportError as e:
+    use_supabase = False
+    st.sidebar.error(f"❌ Supabase not connected: {e}")
+except Exception as e:
+    use_supabase = False
+    st.sidebar.error(f"❌ Supabase error: {e}")
 
 # ─── CUSTOM CSS FOR BETTER STYLING ────────────────────────────
 st.markdown("""
@@ -129,6 +142,7 @@ with col_he:
     )
 
 st.markdown("---")
+
 # ─── SUBSCRIPTION FORM ───────────────────────────────────────
 
 # Create columns to center the form elements
@@ -148,30 +162,49 @@ with col2:
             st.error("Please enter a valid email address")
         else:
             try:
-                token = f.encrypt(email.encode()).decode()
-                subfile = "subscribers.json"
-                data = json.load(open(subfile)) if os.path.exists(subfile) else {"users":[]}
-                
-                # Check if email already exists
-                existing_emails = []
-                for user in data["users"]:
+                # Try to use Supabase if available
+                if use_supabase:
+                    # Convert mode to backend format
+                    backend_mode = "immediate" if mode.startswith("Immediate") else "daily"
+                    
                     try:
-                        decrypted_email = f.decrypt(user["token"].encode()).decode()
-                        existing_emails.append(decrypted_email)
-                    except:
-                        pass
+                        # Add to Supabase with detailed error logging
+                        result = add_subscriber(email, backend_mode)
                         
-                if email in existing_emails:
-                    st.warning("This email is already subscribed! No need to sign up again.")
+                        if result["status"] == "created":
+                            st.success("🎉 You're signed up! Check your inbox soon.")
+                        else:
+                            st.success("✅ Your subscription preferences have been updated.")
+                    except Exception as e:
+                        st.error(f"Supabase subscription error: {str(e)}")
+                        import traceback
+                        st.error(traceback.format_exc())
                 else:
-                    data["users"].append({
-                        "token": token,
-                        "mode":  "immediate" if mode.startswith("Immediate") else "daily",
-                        "date_added": datetime.now().isoformat()
-                    })
-                    with open(subfile,"w") as fp:
-                        json.dump(data, fp, indent=2)
-                    st.success("🎉 You're signed up! Check your inbox soon.")
+                    # Fall back to local file if Supabase is not available
+                    token = f.encrypt(email.encode()).decode()
+                    subfile = "subscribers.json"
+                    data = json.load(open(subfile)) if os.path.exists(subfile) else {"users":[]}
+                    
+                    # Check if email already exists
+                    existing_emails = []
+                    for user in data["users"]:
+                        try:
+                            decrypted_email = f.decrypt(user["token"].encode()).decode()
+                            existing_emails.append(decrypted_email)
+                        except:
+                            pass
+                            
+                    if email in existing_emails:
+                        st.warning("This email is already subscribed! No need to sign up again.")
+                    else:
+                        data["users"].append({
+                            "token": token,
+                            "mode":  "immediate" if mode.startswith("Immediate") else "daily",
+                            "date_added": datetime.now().isoformat()
+                        })
+                        with open(subfile,"w") as fp:
+                            json.dump(data, fp, indent=2)
+                        st.success("🎉 You're signed up! Check your inbox soon.")
             except Exception as e:
                 st.error(f"Subscription error: {str(e)}")
 st.markdown('</div>', unsafe_allow_html=True)
