@@ -64,7 +64,7 @@ def send_email(to_email, subject, html_content):
 # ─────────────────────────────────────────────────────────────
 STORES = [
     {"name":"Dianella",   "url":"https://www.coles.com.au/find-stores/coles/wa/dianella-256"},
-    {"name":"Mirrabooka", "url":"https://www.coles.com.au/find-stores/coles/wa/mirrabooka-421"},
+    {"name":"Mirrabooka", "url":"https://www.coles.com.au/find-stores/coles/wa/mirrabooka-314"},
 ]
 
 # ─────────────────────────────────────────────────────────────
