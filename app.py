@@ -2,6 +2,22 @@ import os, json, streamlit as st
 from cryptography.fernet import Fernet
 from datetime import datetime
 
+def format_awst_time(timestamp_str):
+    """Convert any timestamp to AWST formatted time."""
+    if 'T' in timestamp_str:
+        dt = datetime.fromisoformat(timestamp_str.replace('Z', '+00:00'))
+    else:
+        dt = datetime.fromisoformat(timestamp_str)
+    
+    if dt.tzinfo is None:
+        # Assume UTC if no timezone
+        dt = dt.replace(tzinfo=pytz.utc)
+        
+    # Convert to AWST
+    awst = pytz.timezone('Australia/Perth')
+    awst_time = dt.astimezone(awst)
+    return awst_time.strftime('%Y-%m-%d %H:%M:%S AWST')
+    
 # ─── PAGE CONFIG & FONT ──────────────────────────────────────
 st.set_page_config(
     page_title="Bam.Bot - Bamba Tracker",
