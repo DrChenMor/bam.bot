@@ -21,10 +21,11 @@ if not FERNET_KEY:
 f = Fernet(FERNET_KEY.encode())
 
 # ─── ONE IMAGE AT TOP ────────────────────────────────────────
-st.image(
-    "bamlogo.png",
-    width=300
-)
+st.markdown("""
+<div style='text-align: center;'>
+    <img src='bamlogo.png' width='300'/>
+</div>
+""", unsafe_allow_html=True)
 
 # ─── TWO‑COLUMN BILINGUAL HEADER ────────────────────────────
 col_en, col_he = st.columns(2)
@@ -35,7 +36,7 @@ with col_en:
     **Immediate** – Email the second Bamba pops up in Coles Dianella or Mirrabooka.  
     **Daily summary** – One friendly recap at 15:00 AWST.  
 
-    We keep your address **encrypted**—only our bot can read it. 🔐
+    🔐 We keep your address **encrypted**— only our bot can read it.
     """)
 
 with col_he:
@@ -45,7 +46,7 @@ with col_he:
         <div dir="rtl">
         <p><b>במיידי</b> – שלח דחוף אימייל ברגע שאתה מזהה שיש במבה בסניף דיאנלה או מיררבוקה למה אני זקוק למנת בוטנים.</p>
         <p><b>סיכום יומי</b> – סיכום פעם ביום שנייה לפני שאוספים את הילדים ב–15:00.</p>
-        <p>האימייל שלך <b>מוצפן</b> – הגנה מפני אנטישמיים מובטחת, אלא אם הבוט שלנו יתאסלם.</p>
+        <p> 🔐 האימייל שלך <b>מוצפן</b> – הגנה מפני אנטישמיים מובטחת, אלא אם הבוט שלנו יתאסלם.</p>
         </div>
         """,
         unsafe_allow_html=True,
