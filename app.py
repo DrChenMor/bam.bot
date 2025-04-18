@@ -113,11 +113,10 @@ with col_he:
     )
 
 # ─── SUBSCRIPTION FORM ───────────────────────────────────────
-st.markdown('<div class="subscription-container">', unsafe_allow_html=True)
-st.subheader("Subscribe for Bamba Alerts")
 
 # Create columns to center the form elements
 col1, col2, col3 = st.columns([1, 3, 1])
+st.subheader("Subscribe for Bamba Alerts")
 
 with col2:
     mode = st.radio(
