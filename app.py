@@ -112,6 +112,7 @@ with col_he:
         unsafe_allow_html=True,
     )
 
+st.markdown("---")
 # ─── SUBSCRIPTION FORM ───────────────────────────────────────
 
 # Create columns to center the form elements
@@ -162,7 +163,6 @@ st.markdown('</div>', unsafe_allow_html=True)
 st.markdown("---")
 
 # ─── IMPROVED LATEST STATUS ─────────────────────────────────
-st.markdown('<div class="status-container">', unsafe_allow_html=True)
 st.subheader("🔍 Current Bamba Status")
 
 try:
@@ -214,6 +214,8 @@ except Exception as e:
     st.info("No checks have run yet or error loading data.")
     st.error(f"Debug info: {str(e)}")
 st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown("---")
 
 # ─── AVAILABILITY HISTORY CHART ─────────────────────────────
 st.subheader("Availability History")
