@@ -39,7 +39,7 @@ st.markdown("""
         border-radius: 8px;
         padding: 10px;
         margin: 10px 0;
-        border-left: 4px solid #ffffff;
+        border-left: 4px solid #000000;
     }
     
     .product-unavailable {
