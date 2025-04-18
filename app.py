@@ -53,41 +53,23 @@ with col_he:
     )
 
 # ─── SUBSCRIPTION FORM ───────────────────────────────────────
-with st.container():
-    # Use columns to center the form
-    left_col, center_col, right_col = st.columns([1, 2, 1])
-    with center_col:
-        st.markdown("""
-            <div style="
-                padding: 25px;
-                border: 1px solid #ccc;
-                border-radius: 15px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-                background-color: #fdfdfd;
-                margin-bottom: 40px;
-            ">
-            """, unsafe_allow_html=True)
+mode = st.radio(
+    "Notify me when / הודיעו לי כאשר:",
+    ["Immediate / במיידי", "Daily summary / סיכום פעם ביום"]
+)
+email = st.text_input("Your email / כתובת המייל שלך")
 
-        mode = st.radio(
-            "Notify me when / הודיעו לי כאשר:",
-            ["Immediate / במיידי", "Daily summary / סיכום פעם ביום"]
-        )
-
-        email = st.text_input("Your email / כתובת המייל שלך")
-
-        if st.button("Subscribe"):
-            token = f.encrypt(email.encode()).decode()
-            subfile = "subscribers.json"
-            data = json.load(open(subfile)) if os.path.exists(subfile) else {"users": []}
-            data["users"].append({
-                "token": token,
-                "mode": "immediate" if mode.startswith("Immediate") else "daily"
-            })
-            with open(subfile, "w") as fp:
-                json.dump(data, fp, indent=2)
-            st.success("🎉 You’re signed up! Check your inbox soon.")
-
-        st.markdown("</div>", unsafe_allow_html=True)
+if st.button("Subscribe"):
+    token = f.encrypt(email.encode()).decode()
+    subfile = "subscribers.json"
+    data = json.load(open(subfile)) if os.path.exists(subfile) else {"users":[]}
+    data["users"].append({
+        "token": token,
+        "mode":  "immediate" if mode.startswith("Immediate") else "daily"
+    })
+    with open(subfile,"w") as fp:
+        json.dump(data, fp, indent=2)
+    st.success("🎉 You’re signed up! Check your inbox soon.")
 
 st.markdown("---")
 
