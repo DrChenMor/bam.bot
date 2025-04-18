@@ -1,3 +1,7 @@
 playwright
 cryptography
 streamlit
+pandas
+altair
+supabase
+pytz
