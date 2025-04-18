@@ -22,7 +22,7 @@ f = Fernet(FERNET_KEY.encode())
 
 # ─── ONE IMAGE AT TOP ────────────────────────────────────────
 st.image(
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Bamba-snack.jpg/480px-Bamba-snack.jpg",
+    "bamlogo.png",
     width=300
 )
 
