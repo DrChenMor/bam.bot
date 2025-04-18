@@ -23,7 +23,7 @@ f = Fernet(FERNET_KEY.encode())
 # ─── ONE IMAGE AT TOP ────────────────────────────────────────
 st.markdown("""
 <div style='text-align: center;'>
-  <img src='bamlogo.png' width='300'/>
+  <img src='https://raw.githubusercontent.com/DrChenMor/bam.bot/main/bamlogo.png' width='300'/>
 </div>
 """, unsafe_allow_html=True)
 
