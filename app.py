@@ -21,12 +21,11 @@ if not FERNET_KEY:
 f = Fernet(FERNET_KEY.encode())
 
 # ─── ONE IMAGE AT TOP ────────────────────────────────────────
-col1, col2, col3 = st.columns([1, 2, 1])
-with col2:
-    st.image(
-        "bamlogo.png",
-        width=300
-    )
+st.markdown("""
+<div style='text-align: center;'>
+  <img src='bamlogo.png' width='300'/>
+</div>
+""", unsafe_allow_html=True)
 
 # ─── TWO‑COLUMN BILINGUAL HEADER ────────────────────────────
 col_en, col_he = st.columns(2)
