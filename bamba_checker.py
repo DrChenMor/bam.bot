@@ -88,9 +88,17 @@ def check_store(store):
         "products":  []
     }
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        ctx     = browser.new_context(viewport={"width":1280,"height":920}, locale="en-US")
-        page    = ctx.new_page()
+        browser=p.chromium.launch(headless=True,slow_mo=100)
+        ctx=browser.new_context(
+            viewport={"width":1280,"height":920},
+            locale="en-US",
+            user_agent=(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+                " AppleWebKit/537.36 (KHTML, like Gecko)"
+                " Chrome/120.0.0.0 Safari/537.36"
+            )
+        )
+        page=ctx.new_page()
         page.add_init_script("Object.defineProperty(navigator,'webdriver',{get:()=>undefined})")
 
         try:
