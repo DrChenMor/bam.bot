@@ -3,7 +3,11 @@ from cryptography.fernet import Fernet
 from datetime import datetime
 
 # ─── PAGE CONFIG & FONT ──────────────────────────────────────
-st.set_page_config(page_title="Bam.Bot - Bamba Tracker", layout="wide")
+st.set_page_config(
+    page_title="Bam.Bot - Bamba Tracker",
+    layout="wide",
+    page_icon="bamlogo.png"  # or "assets/bamlogo.png"
+)
 st.markdown("""
   <style>
     * { font-family: 'Calibri', sans-serif !important; }
@@ -16,14 +20,16 @@ if not FERNET_KEY:
     st.error("⚠️ FERNET_KEY not set"); st.stop()
 f = Fernet(FERNET_KEY.encode())
 
+# ─── ONE IMAGE AT TOP ────────────────────────────────────────
+st.image(
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Bamba-snack.jpg/480px-Bamba-snack.jpg",
+    width=300
+)
+
 # ─── TWO‑COLUMN BILINGUAL HEADER ────────────────────────────
 col_en, col_he = st.columns(2)
 
 with col_en:
-    st.image(
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Bamba-snack.jpg/480px-Bamba-snack.jpg",
-        use_container_width=True
-    )
     st.header("🥜 Bam.Bot WA Availability Tracker Signup")
     st.markdown("""
     **Immediate** – Email the second Bamba pops up in Coles Dianella or Mirrabooka.  
@@ -33,17 +39,12 @@ with col_en:
     """)
 
 with col_he:
-    st.image(
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Bamba-snack.jpg/480px-Bamba-snack.jpg",
-        use_container_width=True
-    )
     st.markdown("""
-    <div dir="rtl">
-      <h2>🥜 הרשמה למעקב במבה – במבוט WA</h2>
-      <p><b>במיידי</b> – אימייל ברגע שיש במבה בדיאנלה או מיררבוקה.</p>
-      <p><b>סיכום יומי</b> – סיכום אחד בכל יום ב–15:00.</p>
-      <p>המייל שלך **מוצפן**—רק הבוט שלנו יכול לקרוא אותו. 🔐</p>
-    </div>
+        <div dir="rtl">
+        <p><b>במיידי</b> – שלח דחוף אימייל ברגע שאתה מזהה שיש במבה בסניף דיאנלה או מיררבוקה למה אני זקוק למנת בוטנים.</p>
+        <p><b>סיכום יומי</b> – סיכום פעם ביום שנייה לפני שאוספים את הילדים ב–15:00.</p>
+        <p>האימייל שלך <b>מוצפן</b> – הגנה מפני אנטישמיים מובטחת, אלא אם הבוט שלנו יתאסלם.</p>
+        </div>
     """, unsafe_allow_html=True)
 
 st.markdown("---")
