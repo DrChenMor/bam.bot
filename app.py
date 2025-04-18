@@ -35,11 +35,11 @@ st.markdown("""
     
     /* Product card styling */
     .product-card {
-        background-color: white;
+        background-color: #f5be60;
         border-radius: 8px;
         padding: 10px;
         margin: 10px 0;
-        border-left: 4px solid #4CAF50;
+        border-left: 4px solid #ffffff;
     }
     
     .product-unavailable {
