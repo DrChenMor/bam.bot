@@ -27,7 +27,7 @@ st.markdown("""
     
     /* Status container styling */
     .status-container {
-        background-color: #f0f8ff;
+        background-color: #ffffff;
         border-radius: 10px;
         padding: 15px;
         margin: 20px 0;
