@@ -5,7 +5,7 @@ from datetime import datetime
 # ─── PAGE CONFIG & FONT ──────────────────────────────────────
 st.set_page_config(
     page_title="Bam.Bot - Bamba Tracker",
-    layout="wide",
+    layout="centered",
     page_icon="bamlogo.png"
 )
 
