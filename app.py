@@ -53,6 +53,18 @@ with col_he:
     )
 
 # ─── SUBSCRIPTION FORM ───────────────────────────────────────
+st.markdown("""
+<div style="
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 20px 25px;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.05);
+    background-color: #fdfdfd;
+">
+""", unsafe_allow_html=True)
+
 mode = st.radio(
     "Notify me when / הודיעו לי כאשר:",
     ["Immediate / במיידי", "Daily summary / סיכום פעם ביום"]
@@ -70,6 +82,8 @@ if st.button("Subscribe"):
     with open(subfile,"w") as fp:
         json.dump(data, fp, indent=2)
     st.success("🎉 You’re signed up! Check your inbox soon.")
+
+st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("---")
 
