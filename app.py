@@ -46,27 +46,30 @@ st.markdown("""
         border-left: 4px solid #f44336;
     }
     
-    /* Responsive design for mobile */
-    @media (max-width: 768px) {
-        .subscription-container {
-            padding: 15px;
-            margin: 10px;
-        }
+    /* Form controls styling */
+    .stButton > button {
+        background-color: #4CAF50 !important;
+        color: white !important;
+        border: none !important;
+        padding: 0.5rem 1rem !important;
+        border-radius: 5px !important;
+        font-weight: bold !important;
     }
     
-    /* Button styling */
-    .stButton>button {
-        background-color: #4CAF50;
-        color: white;
-        width: 100%;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 5px;
-        font-weight: bold;
+    .stTextInput > div > div > input {
+        border-radius: 5px !important;
     }
     
-    .stButton>button:hover {
-        background-color: #45a049;
+    /* Prevent the infinite scrolling issue */
+    footer {
+        visibility: hidden;
+    }
+    
+    /* Fix for main content area */
+    .main .block-container {
+        padding-bottom: 1rem;
+        max-width: 1200px;
+        margin: 0 auto;
     }
   </style>
 """, unsafe_allow_html=True)
@@ -79,7 +82,7 @@ f = Fernet(FERNET_KEY.encode())
 
 # ─── ONE IMAGE AT TOP ────────────────────────────────────────
 st.markdown("""
-<div style='text-align: center;'>
+<div style='text-align: center; margin-bottom: 30px;'>
   <img src='https://raw.githubusercontent.com/DrChenMor/bam.bot/main/bamlogo.png' width='300'/>
 </div>
 """, unsafe_allow_html=True)
@@ -88,7 +91,7 @@ st.markdown("""
 col_en, col_he = st.columns(2)
 
 with col_en:
-    st.header("🥜 Bam.Bot WA Availability Tracker Signup")
+    st.markdown("<h2>🥜 Bam.Bot WA Availability Tracker Signup</h2>", unsafe_allow_html=True)
     st.markdown("""
     **Immediate** – Email the second Bamba pops up in Coles Dianella or Mirrabooka.  
     **Daily summary** – One friendly recap at 15:00 AWST.  
@@ -109,47 +112,52 @@ with col_he:
         unsafe_allow_html=True,
     )
 
-# ─── IMPROVED SUBSCRIPTION FORM ────────────────────────────────
+# ─── SUBSCRIPTION FORM ───────────────────────────────────────
 st.markdown('<div class="subscription-container">', unsafe_allow_html=True)
 st.subheader("Subscribe for Bamba Alerts")
 
-mode = st.radio(
-    "Notify me when / הודיעו לי כאשר:",
-    ["Immediate / במיידי", "Daily summary / סיכום פעם ביום"]
-)
-email = st.text_input("Your email / כתובת המייל שלך")
+# Create columns to center the form elements
+col1, col2, col3 = st.columns([1, 3, 1])
 
-if st.button("Subscribe"):
-    if not email or "@" not in email:
-        st.error("Please enter a valid email address")
-    else:
-        try:
-            token = f.encrypt(email.encode()).decode()
-            subfile = "subscribers.json"
-            data = json.load(open(subfile)) if os.path.exists(subfile) else {"users":[]}
-            
-            # Check if email already exists
-            existing_emails = []
-            for user in data["users"]:
-                try:
-                    decrypted_email = f.decrypt(user["token"].encode()).decode()
-                    existing_emails.append(decrypted_email)
-                except:
-                    pass
-                    
-            if email in existing_emails:
-                st.warning("This email is already subscribed! No need to sign up again.")
-            else:
-                data["users"].append({
-                    "token": token,
-                    "mode":  "immediate" if mode.startswith("Immediate") else "daily",
-                    "date_added": datetime.now().isoformat()
-                })
-                with open(subfile,"w") as fp:
-                    json.dump(data, fp, indent=2)
-                st.success("🎉 You're signed up! Check your inbox soon.")
-        except Exception as e:
-            st.error(f"Subscription error: {str(e)}")
+with col2:
+    mode = st.radio(
+        "Notify me when / הודיעו לי כאשר:",
+        ["Immediate / במיידי", "Daily summary / סיכום פעם ביום"]
+    )
+    
+    email = st.text_input("Your email / כתובת המייל שלך")
+    
+    if st.button("Subscribe", use_container_width=True):
+        if not email or "@" not in email:
+            st.error("Please enter a valid email address")
+        else:
+            try:
+                token = f.encrypt(email.encode()).decode()
+                subfile = "subscribers.json"
+                data = json.load(open(subfile)) if os.path.exists(subfile) else {"users":[]}
+                
+                # Check if email already exists
+                existing_emails = []
+                for user in data["users"]:
+                    try:
+                        decrypted_email = f.decrypt(user["token"].encode()).decode()
+                        existing_emails.append(decrypted_email)
+                    except:
+                        pass
+                        
+                if email in existing_emails:
+                    st.warning("This email is already subscribed! No need to sign up again.")
+                else:
+                    data["users"].append({
+                        "token": token,
+                        "mode":  "immediate" if mode.startswith("Immediate") else "daily",
+                        "date_added": datetime.now().isoformat()
+                    })
+                    with open(subfile,"w") as fp:
+                        json.dump(data, fp, indent=2)
+                    st.success("🎉 You're signed up! Check your inbox soon.")
+            except Exception as e:
+                st.error(f"Subscription error: {str(e)}")
 st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("---")
@@ -204,7 +212,7 @@ try:
                 </div>
                 """, unsafe_allow_html=True)
 except Exception as e:
-    st.info(f"No checks have run yet or error loading data: {str(e)}")
+    st.info("No checks have run yet or error loading data.")
     st.error(f"Debug info: {str(e)}")
 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -262,52 +270,45 @@ try:
         # Create a visual chart
         st.write("### Availability Trend")
         
-        # Prepare data for the chart
-        import altair as alt
-        
-        # Group by time and store to get availability over time
-        trend_data = df.pivot_table(
-            index='time',
-            columns='store',
-            values='available_products',
-            aggfunc='sum'
-        ).reset_index()
-        
-        # Melt the dataframe for Altair
-        trend_data_melted = pd.melt(
-            trend_data, 
-            id_vars=['time'], 
-            var_name='Store', 
-            value_name='Available Products'
-        )
-        
-        # Create the chart
-        chart = alt.Chart(trend_data_melted).mark_line(point=True).encode(
-            x=alt.X('time:N', title='Time'),
-            y=alt.Y('Available Products:Q', title='Products Available'),
-            color=alt.Color('Store:N', title='Store'),
-            tooltip=['time', 'Store', 'Available Products']
-        ).properties(
-            width=600,
-            height=300,
-            title='Bamba Availability Trend'
-        ).interactive()
-        
-        st.altair_chart(chart, use_container_width=True)
+        try:
+            # Use Altair for nicer charts
+            import altair as alt
+            
+            # Group by time and store to get availability over time
+            pivot_df = pd.pivot_table(
+                df,
+                index='time',
+                columns='store',
+                values='available_products',
+                aggfunc='sum'
+            ).reset_index()
+            
+            # Melt for charting
+            chart_data = pd.melt(
+                pivot_df, 
+                id_vars=['time'], 
+                var_name='Store', 
+                value_name='Available Products'
+            )
+            
+            # Create the chart
+            chart = alt.Chart(chart_data).mark_line(point=True).encode(
+                x=alt.X('time:N', title='Time'),
+                y=alt.Y('Available Products:Q', title='Products Available'),
+                color=alt.Color('Store:N', title='Store'),
+                tooltip=['time', 'Store', 'Available Products']
+            ).properties(
+                width=600,
+                height=300,
+                title='Bamba Availability Trend'
+            )
+            
+            st.altair_chart(chart, use_container_width=True)
+        except Exception as e:
+            # Fallback to basic chart if Altair fails
+            st.line_chart(pivot_df.set_index('time'))
+            st.error(f"Advanced chart error: {str(e)}")
     else:
         st.info("Not enough history data for trends yet.")
 except Exception as e:
     st.error(f"Error generating history chart: {str(e)}")
-    
-# ─── EMBED REACT DASHBOARD ─────────────────────────────────
-st.subheader("Interactive Bamba Dashboard")
-st.components.v1.html("""
-<div id="dashboard-container" style="height: 700px; border: 1px solid #ddd; border-radius: 10px; padding: 20px; margin: 20px 0;">
-    <h3>Loading interactive dashboard...</h3>
-    <script>
-        // In a real implementation, you would embed your React dashboard here
-        // or load it from a separate hosting service
-        document.getElementById('dashboard-container').innerHTML = '<iframe src="dashboard.html" width="100%" height="100%" frameborder="0"></iframe>';
-    </script>
-</div>
-""", height=750)
