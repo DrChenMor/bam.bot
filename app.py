@@ -43,7 +43,7 @@ if "token" in query_params:
         if email:
             if st.button("Confirm Unsubscribe"):
                 if unsubscribe_email(email):
-                    st.success(f"You have been successfully unsubscribed. You will no longer receive emails about Bamba availability.")
+                    st.success(f"You have been unsubscribed. You will no longer receive Bamba notifications. תמות! בייייי")
                 else:
                     st.error("There was a problem processing your request. Please try again later.")
             else:
@@ -154,20 +154,20 @@ col_en, col_he = st.columns(2)
 with col_en:
     st.markdown("<h2>🥜 Bam.Bot WA Availability Tracker Signup</h2>", unsafe_allow_html=True)
     st.markdown("""
-    **Immediate** – Email the second Bamba pops up in Coles Dianella or Mirrabooka.  
+    **Immediate Update** – Send emails only when Bamba availability changes since the last check.  
     **Daily summary** – One friendly recap at 15:00 AWST.  
 
     🔐 We keep your address **encrypted**— only our bot can read it.
     """)
 
 with col_he:
-    st.markdown("<h2 dir='rtl'>🥜 הרשמה למעקב במבה – במבוט WA</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 dir='rtl'>הרשמה למעכב במבה - 🥜 במבוט WA</h2>", unsafe_allow_html=True)
     st.markdown(
         """
         <div dir="rtl">
-        <p><b>במיידי</b> – שלח דחוף אימייל ברגע שאתה מזהה שיש במבה בסניף דיאנלה או מיררבוקה למה אני זקוק למנת בוטנים.</p>
+        <p><b>התראות מיידיות</b> – שלח דחוף אימייל ברגע שאתה מזהה שיש שינוי בסטטוס של הבמבה בסניף דיאנלה או מיררבוקה למה אני זקוק למנת בוטנים.</p>
         <p><b>סיכום יומי</b> – סיכום פעם ביום שנייה לפני שאוספים את הילדים ב–15:00.</p>
-        <p> 🔐 האימייל שלך <b>מוצפן</b> – הגנה מפני אנטישמיים מובטחת, אלא אם הבוט שלנו יתאסלם.</p>
+        <p> 🔐 האימייל שלך <b>מוצפן</b> – הגנה מפני אנטישמים מובטחת, אלא אם הבוט שלנו יתאסלם.</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -195,13 +195,13 @@ with col2:
         # Store preference
         store_preference = st.radio(
             "Which store(s) would you like alerts for?",
-            options=["Both stores", "Dianella only", "Mirrabooka only"],
+            options=["Both stores", "Dianella only לא יוצא מהגטו", "Mirrabooka only יש עוד עולם מחוץ לגטו??? לא חושב"],
             index=0
         )
         
         # Size preference
         size_preference = st.radio(
-            "Which Bamba size(s) would you like alerts for?",
+            "Which Bamba size(s) would you like alerts for? במילים אחרות, הגודל כן קובע",
             options=["Both sizes", "25g only", "100g only"],
             index=0
         )
@@ -209,9 +209,9 @@ with col2:
         # Notification preferences - CHANGED THIS LINE
         cols = st.columns(2)
         with cols[0]:
-            notify_every_check = st.checkbox("Send me updates on every check (even when nothing changes)", value=False)
+            notify_every_check = st.checkbox("Send me updates on every check (even when nothing changes) אין לי חיים חוץ מבמבה בקיצור, את אמא שלי הייתי מוכר בשביל מנת בוטנים", value=False)
         with cols[1]:
-            include_facts = st.checkbox("Include Bamba facts with notifications", value=False)
+            include_facts = st.checkbox("Include Bamba facts with notifications אני רוצה עובדות על במבה שיהיה לי מה לקרוא בשירותים", value=False)
     
     email = st.text_input("Your email / כתובת המייל שלך")
     
@@ -275,7 +275,7 @@ with col2:
 st.markdown("---")
 
 # ─── IMPROVED LATEST STATUS ─────────────────────────────────
-st.subheader("🔍 Current Bamba Status")
+st.subheader("🔍 Current Bamba Status גיא פינאטס של הבמבות")
 
 try:
     # Refresh the data on each page load to ensure we have the latest
@@ -491,7 +491,7 @@ with st.expander("Unsubscribe from Notifications"):
             if use_supabase:
                 try:
                     if unsubscribe_email(unsub_email):
-                        st.success("You have been unsubscribed. You will no longer receive Bamba notifications.")
+                        st.success("YYou have been unsubscribed. You will no longer receive Bamba notifications. תמות! בייייי")
                     else:
                         st.warning("Email not found in our subscriber list or already unsubscribed.")
                 except Exception as e:
@@ -518,7 +518,7 @@ with st.expander("Unsubscribe from Notifications"):
                         data["users"] = new_users
                         with open(subfile, "w") as fp:
                             json.dump(data, fp, indent=2)
-                        st.success("You have been unsubscribed. You will no longer receive Bamba notifications.")
+                        st.success("You have been unsubscribed. You will no longer receive Bamba notifications. תמות! בייייי")
                     else:
                         st.warning("Email not found in our subscriber list or already unsubscribed.")
                 except Exception as e:
