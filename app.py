@@ -182,7 +182,7 @@ st.markdown("---")
 
 # Create columns to center the form elements
 
-    st.subheader("Subscribe for Bamba Alerts")
+st.subheader("Subscribe for Bamba Alerts")
     
     # Basic subscription mode
     mode = st.radio(
