@@ -67,16 +67,18 @@ if use_supabase:
     # Get subscribers from Supabase
     daily_subscribers = get_subscribers(mode="daily")
     for sub in daily_subscribers:
+        # Add a Bamba fact if subscribed
+        fact_section = ""
+        if sub.get("include_facts", False):
+            fact = get_random_bamba_fact()
+            fact_section = f"""
+            <div style='background-color: #f8f9fa; padding: 10px; margin: 10px 0; border-left: 4px solid #ffc107;'>
+            <h3>🌟 Bamba Fact of the Day</h3>
+            <p>{fact}</p>
+            </div>
+            """
+        
+        # Send the email with customized content based on preferences
+        complete_html = fact_section + html
         subject = "🌰 Your Bamba Daily Roundup is here!"
-        send_email(sub["email"], subject, html)
-else:
-    # Fall back to local file
-    subs = json.load(open("subscribers.json"))["users"]
-    for u in subs:
-        if u["mode"]=="daily":
-            try:
-                email = f.decrypt(u["token"].encode()).decode()
-            except:
-                continue
-            subject = "🌰 Your Bamba Daily Roundup is here!"
-            send_email(email, subject, html)
+        send_email(sub["email"], subject, complete_html)
