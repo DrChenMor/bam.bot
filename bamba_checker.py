@@ -16,6 +16,24 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+# Collection of Bamba facts for the enhanced subscription
+BAMBA_FACTS = [
+    "Bamba was first produced in Israel in 1964 by the Osem company.",
+    "Bamba is made from peanut butter-flavored puffed corn and contains 50% peanuts.",
+    "Studies suggest early exposure to peanut products like Bamba may help prevent peanut allergies in children.",
+    "Bamba is the best-selling snack in Israel, with 90% of Israeli families buying it regularly.",
+    "The Bamba Baby, the brand's mascot since 1992, is a diapered baby with red hair.",
+    "Bamba contains no preservatives, food coloring, or artificial flavors.",
+    "The original Bamba factory is located in Holon, Israel.",
+    "Over 1 million bags of Bamba are produced daily.",
+    "Sweet Bamba varieties include strawberry, halva, and nougat flavors.",
+    "In Israel, Bamba is often a baby's first solid food."
+]
+
+def get_random_bamba_fact():
+    """Return a random fact about Bamba."""
+    return random.choice(BAMBA_FACTS)
+
 # ─────────────────────────────────────────────────────────────
 # 0) TIMEZONE & OPERATING HOURS CHECK
 # ─────────────────────────────────────────────────────────────
@@ -192,7 +210,186 @@ def append_history(run_results):
         json.dump(history, f, indent=2)
 
 # ─────────────────────────────────────────────────────────────
-# 6) MAIN
+# 6) CHANGE DETECTION
+# ─────────────────────────────────────────────────────────────
+def detect_changes(current_results, history):
+    """Detect changes in product availability between current and previous check.
+    
+    Returns:
+        Dictionary of changes per store and product
+    """
+    changes = {}
+    
+    # If no history yet, consider everything as new
+    if not history["runs"]:
+        for store_data in current_results:
+            store_name = store_data["store"]
+            changes[store_name] = []
+            
+            for product in store_data["products"]:
+                changes[store_name].append({
+                    "product": product["name"],
+                    "change_type": "new" if product["available"] else "unavailable",
+                    "price": product["price"],
+                    "available": product["available"]
+                })
+        return changes
+    
+    # Get the most recent previous check
+    prev_check = history["runs"][-1]
+    
+    # Create a lookup for easier comparison
+    prev_status = {}
+    for store_data in prev_check:
+        store_name = store_data["store"]
+        prev_status[store_name] = {}
+        
+        for product in store_data["products"]:
+            prev_status[store_name][product["name"]] = {
+                "available": product["available"],
+                "price": product["price"]
+            }
+    
+    # Now compare current results with previous
+    for store_data in current_results:
+        store_name = store_data["store"]
+        changes[store_name] = []
+        
+        for product in store_data["products"]:
+            product_name = product["name"]
+            
+            # If product existed before
+            if store_name in prev_status and product_name in prev_status[store_name]:
+                # Check if availability changed
+                prev_available = prev_status[store_name][product_name]["available"]
+                curr_available = product["available"]
+                
+                if prev_available != curr_available:
+                    change_type = "now_available" if curr_available else "now_unavailable"
+                    changes[store_name].append({
+                        "product": product_name,
+                        "change_type": change_type,
+                        "price": product["price"],
+                        "available": curr_available
+                    })
+            else:
+                # New product
+                changes[store_name].append({
+                    "product": product_name,
+                    "change_type": "new" if product["available"] else "unavailable",
+                    "price": product["price"],
+                    "available": product["available"]
+                })
+    
+    return changes
+
+# ─────────────────────────────────────────────────────────────
+# 7) CONSOLIDATED EMAIL NOTIFICATIONS
+# ─────────────────────────────────────────────────────────────
+def send_notifications(store_results, subscribers):
+    """Send notifications to subscribers based on their preferences."""
+    
+    # Load history to detect changes
+    history = {"runs": []}
+    if os.path.exists("history.json"):
+        history = json.load(open("history.json"))
+    
+    # Detect changes since last check
+    changes = detect_changes(store_results, history)
+    
+    # Build a consolidated notification for each subscriber
+    for subscriber in subscribers:
+        # Skip subscribers who want change notifications if nothing changed
+        if subscriber.get("notify_on_change_only", False):
+            has_relevant_changes = False
+            for store_name, store_changes in changes.items():
+                if store_changes and (subscriber.get("store_preference", "both") == "both" or 
+                                    subscriber.get("store_preference", "both") == store_name.lower()):
+                    has_relevant_changes = True
+                    break
+            
+            if not has_relevant_changes:
+                continue
+        
+        # Create consolidated email content
+        subject = "🥜 Bamba Status Update"
+        
+        # Start building the email
+        body = "<h1>Bamba Status Update</h1>"
+        
+        # Add a Bamba fact if subscribed
+        if subscriber.get("include_facts", False):
+            fact = get_random_bamba_fact()
+            body += f"<div style='background-color: #f8f9fa; padding: 10px; margin: 10px 0; border-left: 4px solid #ffc107;'>"
+            body += f"<h3>🌟 Bamba Fact of the Day</h3>"
+            body += f"<p>{fact}</p>"
+            body += "</div>"
+        
+        any_available = False
+        
+        # Add store sections based on preferences
+        for store_data in store_results:
+            store_name = store_data["store"]
+            
+            # Skip if not interested in this store
+            if subscriber.get("store_preference", "both") != "both" and subscriber.get("store_preference", "both") != store_name.lower():
+                continue
+            
+            # Get timestamp in AWST
+            ts = store_data["timestamp"].split("T")[1][:8]
+            
+            body += f"<h2>{store_name} (Checked at {ts} AWST)</h2>"
+            
+            if not store_data["products"]:
+                body += "<p>No Bamba products found at this store.</p>"
+                continue
+            
+            body += "<ul>"
+            
+            for product in store_data["products"]:
+                # Extract size from product name
+                size = "Unknown"
+                if "|" in product["name"]:
+                    size = product["name"].split("|")[1].strip()
+                
+                product_name = product["name"].split("|")[0].strip() if "|" in product["name"] else product["name"]
+                
+                # Skip if not interested in this size
+                size_pref = subscriber.get("product_size_preference", "both")
+                if size_pref != "both":
+                    if size_pref == "25g" and "25g" not in size:
+                        continue
+                    if size_pref == "100g" and "100g" not in size:
+                        continue
+                
+                status = "✅ Available" if product["available"] else "❌ Currently Unavailable"
+                
+                # Highlight changes if notify_on_change_only is True
+                highlight = ""
+                for change in changes.get(store_name, []):
+                    if change["product"] == product["name"]:
+                        if change["change_type"] in ["now_available", "new"] and product["available"]:
+                            highlight = " - <strong style='color: green;'>JUST BECAME AVAILABLE!</strong>"
+                            any_available = True
+                        elif change["change_type"] == "now_unavailable":
+                            highlight = " - <strong style='color: red;'>JUST SOLD OUT!</strong>"
+                
+                body += f"<li><strong>{product_name}</strong> ({size}) - {status}{highlight}<br>Price: {product['price']}</li>"
+            
+            body += "</ul>"
+        
+        # Update subject line if anything is available
+        if any_available:
+            subject = "🎉 Bamba Alert: Now Available!"
+        
+        body += "<p>Happy snacking! 🤖</p>"
+        
+        # Send the email
+        send_email(subscriber["email"], subject, body)
+        print(f"  ✉️ Consolidated email sent to {subscriber['email']}")
+
+# ─────────────────────────────────────────────────────────────
+# 8) MAIN
 # ─────────────────────────────────────────────────────────────
 def main():
     # Load config and check operating hours
@@ -211,19 +408,12 @@ def main():
     for store in STORES:
         res = check_store(store)
         allr.append(res)
-        if res["available"]:
-            for u in subs:
-                if u["mode"]=="immediate":
-                    awst_time = res['timestamp'].split('T')[1][:8]
-                    subject = f"🎉 Bamba Alert: {res['store']} is stocked!"
-                    body    = (
-                        f"<h1>Holy Peanut! 🌰</h1>"
-                        f"<p>Bamba is in stock at <b>{res['store']}</b> as of "
-                        f"{awst_time} AWST.</p>"
-                        "<p>Time to snack! 🤖</p>"
-                    )
-                    send_email(u["email"], subject, body)
         time.sleep(random.uniform(2,5))  # Short delay for testing
+    
+    # Send consolidated notifications based on subscriber preferences
+    send_notifications(allr, subs)
+    
+    # Save results to history
     append_history(allr)
     print("\n✅ Done.")
 
