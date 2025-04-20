@@ -197,13 +197,13 @@ with st.expander("Advanced Subscription Options"):
         # Store preference
     store_preference = st.radio(
         "Which store(s) would you like alerts for?",
-        options=["Both stores", "Dianella only - לא יוצא/ת מהגטו", "Mirrabooka only - יש עוד עולם מחוץ לגטו?!"],
+        options=["Both stores", "Dianella only / לא יוצא/ת מהגטו", "Mirrabooka only / יש עוד עולם מחוץ לגטו?!"],
         index=0
     )
         
         # Size preference
     size_preference = st.radio(
-        "Which Bamba size(s) would you like alerts for? - במילים אחרות, הגודל כן קובע",
+        "Which Bamba size(s) would you like alerts for? / במילים אחרות, הגודל כן קובע",
         options=["Both sizes", "25g only", "100g only"],
         index=0
     )
@@ -211,9 +211,9 @@ with st.expander("Advanced Subscription Options"):
         # Notification preferences - CHANGED THIS LINE
     cols = st.columns(2)
     with cols[0]:
-        notify_every_check = st.checkbox("Send me updates on every check (even when nothing changes) - אין לי חיים חוץ מבמבה! בקיצור, את אמא שלי הייתי מוכר בשביל מנת בוטנים", value=False)
+        notify_every_check = st.checkbox("Send me updates on every check (even when nothing changes) / אין לי חיים חוץ מבמבה! בקיצור, את אמא שלי הייתי מוכר בשביל מנת בוטנים", value=False)
     with cols[1]:
-        include_facts = st.checkbox("Include Bamba facts with notifications - אני רוצה עובדות על במבה שיהיה לי מה לקרוא בשירותים", value=False)
+        include_facts = st.checkbox("Include Bamba facts with notifications / אני רוצה עובדות על במבה שיהיה לי מה לקרוא בשירותים", value=False)
     
 email = st.text_input("Your email / כתובת המייל שלך")
     
