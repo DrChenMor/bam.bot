@@ -4,10 +4,6 @@ import pytz
 from datetime import datetime
 import random
 
-# Get Supabase credentials from environment variables
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-
 # Collection of Bamba facts for the enhanced subscription
 BAMBA_FACTS = [
     "Bamba was first produced in Israel in 1964 by the Osem company.",
@@ -21,6 +17,10 @@ BAMBA_FACTS = [
     "Sweet Bamba varieties include strawberry, halva, and nougat flavors.",
     "In Israel, Bamba is often a baby's first solid food."
 ]
+
+# Get Supabase credentials from environment variables
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 def get_random_bamba_fact():
     """Return a random fact about Bamba."""
@@ -57,7 +57,7 @@ def add_subscriber(email: str, preferences: dict) -> dict:
     preferences.setdefault("mode", "immediate")
     preferences.setdefault("product_size_preference", "both")
     preferences.setdefault("store_preference", "both")
-    preferences.setdefault("notify_on_change_only", False)
+    preferences.setdefault("notify_on_change_only", True)  # Changed default to TRUE
     preferences.setdefault("include_facts", False)
     
     # Prepare subscriber data
@@ -96,6 +96,48 @@ def get_subscribers(mode=None):
         
     result = query.execute()
     return result.data
+
+def generate_unsubscribe_token(email):
+    """Generate a secure token for unsubscribing."""
+    # Create a timestamp to expire tokens after some time
+    timestamp = int(datetime.now().timestamp())
+    # Combine with email and a secret to make it secure
+    message = f"{email}|{timestamp}"
+    # Use the same Fernet key you use for encryption
+    from cryptography.fernet import Fernet
+    fernet_key = os.getenv("FERNET_KEY")
+    f = Fernet(fernet_key.encode())
+    # Encrypt and return as a URL-safe string
+    return f.encrypt(message.encode()).decode().replace('+', '-').replace('/', '_')
+
+def verify_unsubscribe_token(token):
+    """Verify an unsubscribe token and return the email if valid."""
+    try:
+        # Replace URL-safe characters back
+        token = token.replace('-', '+').replace('_', '/')
+        # Decrypt using your Fernet key
+        from cryptography.fernet import Fernet
+        fernet_key = os.getenv("FERNET_KEY")
+        f = Fernet(fernet_key.encode())
+        message = f.decrypt(token.encode()).decode()
+        # Split to get email and timestamp
+        email, timestamp = message.split('|')
+        # Check if token is expired (e.g., after 30 days)
+        token_time = datetime.fromtimestamp(int(timestamp))
+        if (datetime.now() - token_time).days > 30:
+            return None  # Token expired
+        return email
+    except Exception:
+        return None  # Invalid token
+
+def unsubscribe_email(email):
+    """Remove a subscriber from the database."""
+    if not email:
+        return False
+        
+    client = get_supabase_client()
+    result = client.table("subscribers").delete().eq("email", email).execute()
+    return len(result.data) > 0
 
 def get_awst_time():
     """Get current time in Australian Western Standard Time (AWST)."""
