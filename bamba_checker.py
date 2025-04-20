@@ -389,7 +389,7 @@ def send_notifications(store_results, subscribers):
             from supabase_client import generate_unsubscribe_token
             unsubscribe_token = generate_unsubscribe_token(subscriber["email"])
             # Use the URL of your Streamlit app
-            app_url = "https://yourstreamlitapp.streamlit.app"  # Replace with your actual Streamlit URL
+            app_url = "https://bambot.streamlit.app/"
             body += f'<p style="color: #777; font-size: 0.8em; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px;">Don\'t want these emails? <a href="{app_url}?token={unsubscribe_token}">Unsubscribe</a></p>'
         except Exception as e:
             print(f"Error generating unsubscribe link: {e}")
