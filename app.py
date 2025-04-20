@@ -185,94 +185,94 @@ st.markdown("---")
 st.subheader("Subscribe for Bamba Alerts")
     
     # Basic subscription mode
-    mode = st.radio(
-        "Notification frequency / תדירות ההתראות:",
-        ["Immediate updates / התראות מיידיות", "Daily summary / סיכום יומי"]
-    )
+mode = st.radio(
+    "Notification frequency / תדירות ההתראות:",
+    ["Immediate updates / התראות מיידיות", "Daily summary / סיכום יומי"]
+)
     
     # Advanced settings expander
-    with st.expander("Advanced Subscription Options"):
-        st.write("Customize your Bamba alerts:")
+with st.expander("Advanced Subscription Options"):
+    st.write("Customize your Bamba alerts:")
         
         # Store preference
-        store_preference = st.radio(
-            "Which store(s) would you like alerts for?",
-            options=["Both stores", "Dianella only לא יוצא מהגטו", "Mirrabooka only יש עוד עולם מחוץ לגטו?!"],
-            index=0
-        )
+    store_preference = st.radio(
+        "Which store(s) would you like alerts for?",
+        options=["Both stores", "Dianella only לא יוצא מהגטו", "Mirrabooka only יש עוד עולם מחוץ לגטו?!"],
+        index=0
+    )
         
         # Size preference
-        size_preference = st.radio(
-            "Which Bamba size(s) would you like alerts for? במילים אחרות, הגודל כן קובע",
-            options=["Both sizes", "25g only", "100g only"],
-            index=0
-        )
+    size_preference = st.radio(
+        "Which Bamba size(s) would you like alerts for? במילים אחרות, הגודל כן קובע",
+        options=["Both sizes", "25g only", "100g only"],
+        index=0
+    )
         
         # Notification preferences - CHANGED THIS LINE
-        cols = st.columns(2)
-        with cols[0]:
-            notify_every_check = st.checkbox("Send me updates on every check (even when nothing changes) אין לי חיים חוץ מבמבה! בקיצור, את אמא שלי הייתי מוכר בשביל מנת בוטנים", value=False)
-        with cols[1]:
-            include_facts = st.checkbox("Include Bamba facts with notifications אני רוצה עובדות על במבה שיהיה לי מה לקרוא בשירותים", value=False)
+    cols = st.columns(2)
+    with cols[0]:
+        notify_every_check = st.checkbox("Send me updates on every check (even when nothing changes) אין לי חיים חוץ מבמבה! בקיצור, את אמא שלי הייתי מוכר בשביל מנת בוטנים", value=False)
+    with cols[1]:
+        include_facts = st.checkbox("Include Bamba facts with notifications אני רוצה עובדות על במבה שיהיה לי מה לקרוא בשירותים", value=False)
     
-    email = st.text_input("Your email / כתובת המייל שלך")
+email = st.text_input("Your email / כתובת המייל שלך")
     
-    if st.button("Subscribe", use_container_width=True):
-        if not email or "@" not in email:
-            st.error("Please enter a valid email address")
-        else:
-            try:
+if st.button("Subscribe", use_container_width=True):
+    if not email or "@" not in email:
+        st.error("Please enter a valid email address")
+    else:
+        try:
                 # Convert UI selections to database format
-                preferences = {
-                    "mode": "immediate" if mode.startswith("Immediate") else "daily",
-                    "store_preference": "both" if store_preference == "Both stores" else store_preference.replace(" only", "").lower(),
-                    "product_size_preference": "both" if size_preference == "Both sizes" else size_preference.replace(" only", "").lower(),
-                    "notify_on_change_only": not notify_every_check,  # INVERTED THE VALUE HERE
-                    "include_facts": include_facts
-                }
+            preferences = {
+                "mode": "immediate" if mode.startswith("Immediate") else "daily",
+                "store_preference": "both" if store_preference == "Both stores" else store_preference.replace(" only", "").lower(),
+                "product_size_preference": "both" if size_preference == "Both sizes" else size_preference.replace(" only", "").lower(),
+                "notify_on_change_only": not notify_every_check,  # INVERTED THE VALUE HERE
+                "include_facts": include_facts
+            }
                 
                 # Try to use Supabase if available
-                if use_supabase:
-                    try:
+            if use_supabase:
+                try:
                         # Add to Supabase with detailed error logging
-                        result = add_subscriber(email, preferences)
+                    result = add_subscriber(email, preferences)
                         
-                        if result["status"] == "created":
-                            st.success("🎉 You're signed up! Check your inbox soon.")
-                        else:
-                            st.success("✅ Your subscription preferences have been updated.")
-                    except Exception as e:
-                        st.error(f"Supabase subscription error: {str(e)}")
-                        st.error(traceback.format_exc())
-                else:
+                    if result["status"] == "created":
+                        st.success("🎉 You're signed up! Check your inbox soon.")
+                    else:
+                        st.success("✅ Your subscription preferences have been updated.")
+                except Exception as e:
+                    st.error(f"Supabase subscription error: {str(e)}")
+                    st.error(traceback.format_exc())
+            else:
                     # Fall back to local file if Supabase is not available
-                    token = f.encrypt(email.encode()).decode()
-                    subfile = "subscribers.json"
-                    data = json.load(open(subfile)) if os.path.exists(subfile) else {"users":[]}
+                token = f.encrypt(email.encode()).decode()
+                subfile = "subscribers.json"
+                data = json.load(open(subfile)) if os.path.exists(subfile) else {"users":[]}
                     
                     # Check if email already exists
-                    existing_emails = []
-                    for user in data["users"]:
-                        try:
-                            decrypted_email = f.decrypt(user["token"].encode()).decode()
-                            existing_emails.append(decrypted_email)
-                        except:
-                            pass
+                existing_emails = []
+                for user in data["users"]:
+                    try:
+                        decrypted_email = f.decrypt(user["token"].encode()).decode()
+                        existing_emails.append(decrypted_email)
+                    except:
+                        pass
                             
-                    if email in existing_emails:
-                        st.warning("This email is already subscribed! No need to sign up again.")
-                    else:
-                        data["users"].append({
-                            "token": token,
-                            "mode": preferences["mode"],
-                            "date_added": datetime.now().isoformat()
+                if email in existing_emails:
+                    st.warning("This email is already subscribed! No need to sign up again.")
+                else:
+                    data["users"].append({
+                        "token": token,
+                        "mode": preferences["mode"],
+                        "date_added": datetime.now().isoformat()
                             # Note: The local file approach doesn't support advanced preferences
-                        })
-                        with open(subfile,"w") as fp:
-                            json.dump(data, fp, indent=2)
-                        st.success("🎉 You're signed up! Check your inbox soon.")
-            except Exception as e:
-                st.error(f"Subscription error: {str(e)}")
+                    })
+                    with open(subfile,"w") as fp:
+                        json.dump(data, fp, indent=2)
+                    st.success("🎉 You're signed up! Check your inbox soon.")
+        except Exception as e:
+            st.error(f"Subscription error: {str(e)}")
                 
 st.markdown("---")
 
