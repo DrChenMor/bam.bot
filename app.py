@@ -277,7 +277,7 @@ if st.button("Subscribe", use_container_width=True):
 st.markdown("---")
 
 # ─── IMPROVED LATEST STATUS ─────────────────────────────────
-st.subheader("🔍 Current Bamba Status גיא פינאטס של הבמבות")
+st.subheader("🔍 Current Bamba Status / גיא פינאטס של הבמבות")
 
 try:
     # Refresh the data on each page load to ensure we have the latest
