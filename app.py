@@ -156,9 +156,9 @@ with col_en:
     st.markdown(
         """
         <div>
-        <p><b>**Immediate Update**</b> – Send emails only when Bamba availability changes since the last check.</p>  
-        <p><b>**Daily summary**</b> – One friendly recap at 15:00 AWST.</p>  
-        <p>🔐 We keep your address **encrypted**— only our bot can read it.<,p>
+        <p><b>Immediate Update</b> – Send emails only when Bamba availability changes since the last check.</p>  
+        <p><b>Daily summary</b> – One friendly recap at 15:00 AWST.</p>  
+        <p>🔐 We keep your address <b>encrypted</b>— only our bot can read it.<,p>
         </div>
         """,
         unsafe_allow_html=True,
