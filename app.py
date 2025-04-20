@@ -152,7 +152,7 @@ st.markdown("""
 col_en, col_he = st.columns(2)
 
 with col_en:
-    st.markdown("<h2>🥜 BamBot WA Availability Tracker Signup</h2>", unsafe_allow_html=True)
+    st.markdown("<h2>🥜 BamBot WA - Availability Tracker Signup</h2>", unsafe_allow_html=True)
     st.markdown(
         """
         <div>
