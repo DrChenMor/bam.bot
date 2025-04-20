@@ -181,9 +181,7 @@ with col_he:
 st.markdown("---")
 
 # Create columns to center the form elements
-col1, col2, col3 = st.columns([1, 3, 1])
 
-with col2:
     st.subheader("Subscribe for Bamba Alerts")
     
     # Basic subscription mode
