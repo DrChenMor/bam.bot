@@ -154,10 +154,10 @@ col_en, col_he = st.columns(2)
 with col_en:
     st.markdown("<h2>🥜 Bam.Bot WA Availability Tracker Signup</h2>", unsafe_allow_html=True)
     st.markdown("""
-    **Immediate Update** – Send emails only when Bamba availability changes since the last check.  
-    **Daily summary** – One friendly recap at 15:00 AWST.  
+    <p><b>**Immediate Update**</b> – Send emails only when Bamba availability changes since the last check.</p>  
+    <p><b>**Daily summary**</b> – One friendly recap at 15:00 AWST.</p>  
 
-    🔐 We keep your address **encrypted**— only our bot can read it.
+    <p>🔐 We keep your address **encrypted**— only our bot can read it.<,p>
     """)
 
 with col_he:
