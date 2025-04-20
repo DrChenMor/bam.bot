@@ -141,19 +141,45 @@ with col_he:
         unsafe_allow_html=True,
     )
 
-st.markdown("---")
-
 # ─── SUBSCRIPTION FORM ───────────────────────────────────────
+st.markdown("---")
 
 # Create columns to center the form elements
 col1, col2, col3 = st.columns([1, 3, 1])
 
 with col2:
     st.subheader("Subscribe for Bamba Alerts")
+    
+    # Basic subscription mode
     mode = st.radio(
-        "Notify me when / הודיעו לי כאשר:",
-        ["Immediate / במיידי", "Daily summary / סיכום פעם ביום"]
+        "Notification frequency / תדירות ההתראות:",
+        ["Immediate updates / התראות מיידיות", "Daily summary / סיכום יומי"]
     )
+    
+    # Advanced settings expander
+    with st.expander("Advanced Subscription Options"):
+        st.write("Customize your Bamba alerts:")
+        
+        # Store preference
+        store_preference = st.radio(
+            "Which store(s) would you like alerts for?",
+            options=["Both stores", "Dianella only", "Mirrabooka only"],
+            index=0
+        )
+        
+        # Size preference
+        size_preference = st.radio(
+            "Which Bamba size(s) would you like alerts for?",
+            options=["Both sizes", "25g only", "100g only"],
+            index=0
+        )
+        
+        # Notification preferences
+        cols = st.columns(2)
+        with cols[0]:
+            notify_on_change = st.checkbox("Only notify when availability changes", value=False)
+        with cols[1]:
+            include_facts = st.checkbox("Include Bamba facts with notifications", value=False)
     
     email = st.text_input("Your email / כתובת המייל שלך")
     
@@ -162,14 +188,20 @@ with col2:
             st.error("Please enter a valid email address")
         else:
             try:
+                # Convert UI selections to database format
+                preferences = {
+                    "mode": "immediate" if mode.startswith("Immediate") else "daily",
+                    "store_preference": "both" if store_preference == "Both stores" else store_preference.replace(" only", "").lower(),
+                    "product_size_preference": "both" if size_preference == "Both sizes" else size_preference.replace(" only", "").lower(),
+                    "notify_on_change_only": notify_on_change,
+                    "include_facts": include_facts
+                }
+                
                 # Try to use Supabase if available
                 if use_supabase:
-                    # Convert mode to backend format
-                    backend_mode = "immediate" if mode.startswith("Immediate") else "daily"
-                    
                     try:
                         # Add to Supabase with detailed error logging
-                        result = add_subscriber(email, backend_mode)
+                        result = add_subscriber(email, preferences)
                         
                         if result["status"] == "created":
                             st.success("🎉 You're signed up! Check your inbox soon.")
@@ -199,8 +231,9 @@ with col2:
                     else:
                         data["users"].append({
                             "token": token,
-                            "mode":  "immediate" if mode.startswith("Immediate") else "daily",
+                            "mode": preferences["mode"],
                             "date_added": datetime.now().isoformat()
+                            # Note: The local file approach doesn't support advanced preferences
                         })
                         with open(subfile,"w") as fp:
                             json.dump(data, fp, indent=2)
