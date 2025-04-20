@@ -1,7 +1,8 @@
 import os, json, streamlit as st
 from cryptography.fernet import Fernet
 from datetime import datetime
-import pytz  # Add this import - it was missing before
+import pytz
+import traceback
 
 def format_awst_time(timestamp_str):
     """Convert any timestamp to AWST formatted time."""
@@ -18,7 +19,7 @@ def format_awst_time(timestamp_str):
     awst = pytz.timezone('Australia/Perth')
     awst_time = dt.astimezone(awst)
     return awst_time.strftime('%Y-%m-%d %H:%M:%S AWST')
-    
+
 # ─── PAGE CONFIG & FONT ──────────────────────────────────────
 st.set_page_config(
     page_title="Bam.Bot - Bamba Tracker",
@@ -26,9 +27,40 @@ st.set_page_config(
     page_icon="bamlogo.png"
 )
 
+# Get the query parameters to check for unsubscribe tokens
+query_params = st.experimental_get_query_params()
+
+# Check if this is an unsubscribe request
+if "token" in query_params:
+    try:
+        from supabase_client import verify_unsubscribe_token, unsubscribe_email
+        
+        token = query_params["token"][0]
+        email = verify_unsubscribe_token(token)
+        
+        st.title("Unsubscribe from Bamba Tracker")
+        
+        if email:
+            if st.button("Confirm Unsubscribe"):
+                if unsubscribe_email(email):
+                    st.success(f"You have been successfully unsubscribed. You will no longer receive emails about Bamba availability.")
+                else:
+                    st.error("There was a problem processing your request. Please try again later.")
+            else:
+                st.write(f"Are you sure you want to unsubscribe {email} from Bamba availability notifications?")
+                st.write("Click the button above to confirm.")
+        else:
+            st.error("Invalid or expired unsubscribe link. Please check your email for a valid unsubscribe link.")
+        
+        # Stop here - don't show the main app
+        st.stop()
+    except Exception as e:
+        st.error(f"Error processing unsubscribe request: {str(e)}")
+        st.error("Please try the manual unsubscribe option at the bottom of the page.")
+
 # Try to import Supabase client
 try:
-    from supabase_client import add_subscriber, get_subscribers
+    from supabase_client import add_subscriber, get_subscribers, unsubscribe_email
     use_supabase = True
     st.sidebar.success("✅ Supabase connected")
 except ImportError as e:
@@ -174,10 +206,10 @@ with col2:
             index=0
         )
         
-        # Notification preferences
+        # Notification preferences - CHANGED THIS LINE
         cols = st.columns(2)
         with cols[0]:
-            notify_on_change = st.checkbox("Only notify when availability changes", value=False)
+            notify_every_check = st.checkbox("Send me updates on every check (even when nothing changes)", value=False)
         with cols[1]:
             include_facts = st.checkbox("Include Bamba facts with notifications", value=False)
     
@@ -193,7 +225,7 @@ with col2:
                     "mode": "immediate" if mode.startswith("Immediate") else "daily",
                     "store_preference": "both" if store_preference == "Both stores" else store_preference.replace(" only", "").lower(),
                     "product_size_preference": "both" if size_preference == "Both sizes" else size_preference.replace(" only", "").lower(),
-                    "notify_on_change_only": notify_on_change,
+                    "notify_on_change_only": not notify_every_check,  # INVERTED THE VALUE HERE
                     "include_facts": include_facts
                 }
                 
@@ -209,7 +241,6 @@ with col2:
                             st.success("✅ Your subscription preferences have been updated.")
                     except Exception as e:
                         st.error(f"Supabase subscription error: {str(e)}")
-                        import traceback
                         st.error(traceback.format_exc())
                 else:
                     # Fall back to local file if Supabase is not available
@@ -295,8 +326,8 @@ try:
 except Exception as e:
     st.info("No checks have run yet or error loading data.")
     st.error(f"Debug info: {str(e)}")
-st.markdown('</div>', unsafe_allow_html=True)
 
+# Removed extra closing div that was causing rendering issues
 st.markdown("---")
 
 # ─── AVAILABILITY HISTORY CHART ─────────────────────────────
@@ -395,3 +426,49 @@ try:
         st.info("Not enough history data for trends yet.")
 except Exception as e:
     st.error(f"Error generating history chart: {str(e)}")
+
+# ─── UNSUBSCRIBE SECTION ─────────────────────────────────────
+st.markdown("---")
+with st.expander("Unsubscribe from Notifications"):
+    st.write("If you no longer wish to receive Bamba notifications, enter your email below:")
+    unsub_email = st.text_input("Your email address", key="unsubscribe_email")
+    
+    if st.button("Unsubscribe Me", key="unsubscribe_button"):
+        if unsub_email and "@" in unsub_email:
+            if use_supabase:
+                try:
+                    if unsubscribe_email(unsub_email):
+                        st.success("You have been unsubscribed. You will no longer receive Bamba notifications.")
+                    else:
+                        st.warning("Email not found in our subscriber list or already unsubscribed.")
+                except Exception as e:
+                    st.error(f"Error unsubscribing: {str(e)}")
+            else:
+                # Fallback to local file approach
+                try:
+                    subfile = "subscribers.json"
+                    data = json.load(open(subfile)) if os.path.exists(subfile) else {"users":[]}
+                    
+                    found = False
+                    new_users = []
+                    for user in data["users"]:
+                        try:
+                            email = f.decrypt(user["token"].encode()).decode()
+                            if email.lower() != unsub_email.lower():
+                                new_users.append(user)
+                            else:
+                                found = True
+                        except:
+                            new_users.append(user)
+                    
+                    if found:
+                        data["users"] = new_users
+                        with open(subfile, "w") as fp:
+                            json.dump(data, fp, indent=2)
+                        st.success("You have been unsubscribed. You will no longer receive Bamba notifications.")
+                    else:
+                        st.warning("Email not found in our subscriber list or already unsubscribed.")
+                except Exception as e:
+                    st.error(f"Error unsubscribing: {str(e)}")
+        else:
+            st.error("Please enter a valid email address.")
