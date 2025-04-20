@@ -332,26 +332,70 @@ st.markdown("---")
 
 # ─── AVAILABILITY HISTORY CHART ─────────────────────────────
 st.subheader("Availability History")
+
+# Add a refresh button
+refresh = st.button("🔄 Refresh History Data")
+
 try:
-    hist = json.load(open("history.json"))["runs"]
+    # Always reload data from file to ensure we have latest
+    with open("history.json", "r") as f:
+        hist_content = f.read()
+        hist = json.loads(hist_content)["runs"]
+    
     if len(hist) > 1:  # Only show if we have multiple data points
-        # Convert data for charting
+        # Convert data for charting with size breakdown
         chart_data = []
+        
         for i, run in enumerate(hist):
             # Get timestamp in readable format
             ts = run[0]["timestamp"].replace("T", " ").split(".")[0]
             
-            # For each store in this run
+            # Process each store
             for store_data in run:
-                # Count available products
-                available_count = sum(1 for p in store_data["products"] if p["available"])
+                store_name = store_data["store"]
+                
+                # Initialize counters for different product sizes
+                size_25g_available = 0
+                size_100g_available = 0
+                size_25g_total = 0
+                size_100g_total = 0
+                
+                # Count products by size
+                for product in store_data["products"]:
+                    # Extract size from product name
+                    product_size = "unknown"
+                    if "|" in product["name"]:
+                        size_part = product["name"].split("|")[1].strip()
+                        if "25g" in size_part:
+                            product_size = "25g"
+                            size_25g_total += 1
+                            if product["available"]:
+                                size_25g_available += 1
+                        elif "100g" in size_part:
+                            product_size = "100g"
+                            size_100g_total += 1
+                            if product["available"]:
+                                size_100g_available += 1
+                    
+                # Add entry for this store and timestamp with size breakdown
+                chart_data.append({
+                    "run": i,
+                    "time": ts,
+                    "store": store_name,
+                    "size": "25g",
+                    "available": size_25g_available,
+                    "total": size_25g_total,
+                    "availability_pct": round(size_25g_available/size_25g_total*100 if size_25g_total > 0 else 0)
+                })
                 
                 chart_data.append({
                     "run": i,
                     "time": ts,
-                    "store": store_data["store"],
-                    "available_products": available_count,
-                    "total_products": len(store_data["products"])
+                    "store": store_name,
+                    "size": "100g",
+                    "available": size_100g_available,
+                    "total": size_100g_total,
+                    "availability_pct": round(size_100g_available/size_100g_total*100 if size_100g_total > 0 else 0)
                 })
         
         # Display as a table with better formatting
@@ -360,40 +404,48 @@ try:
         # Create a cleaner dataframe view
         import pandas as pd
         df = pd.DataFrame(chart_data)
+        
         # Format the time column
         if 'time' in df.columns:
-            df['time'] = pd.to_datetime(df['time']).dt.strftime('%H:%M')
+            df['time'] = pd.to_datetime(df['time']).dt.strftime('%Y-%m-%d %H:%M')
         
-        # Add availability percentage
-        if 'available_products' in df.columns and 'total_products' in df.columns:
-            df['availability'] = (df['available_products'] / df['total_products'] * 100).round(0).astype(int).astype(str) + '%'
-        
-        # Select and rename columns for display
-        display_df = df[['time', 'store', 'available_products', 'total_products', 'availability']].rename(
+        # Create a display-friendly dataframe
+        display_df = df[['time', 'store', 'size', 'available', 'total', 'availability_pct']].rename(
             columns={
                 'time': 'Time',
                 'store': 'Store',
-                'available_products': 'In Stock',
-                'total_products': 'Total Products', 
-                'availability': 'Availability %'
+                'size': 'Size',
+                'available': 'In Stock',
+                'total': 'Total Products', 
+                'availability_pct': 'Availability %'
             }
         )
         
+        # Add % sign to availability
+        display_df['Availability %'] = display_df['Availability %'].astype(str) + '%'
+        
+        # Sort by most recent time first
+        display_df = display_df.sort_values(by=['Time', 'Store', 'Size'], ascending=[False, True, True])
+        
         st.dataframe(display_df, use_container_width=True)
         
-        # Create a visual chart
-        st.write("### Availability Trend")
+        # Create a visual chart that shows size breakdown
+        st.write("### Availability Trend by Size")
         
         try:
             # Use Altair for nicer charts
             import altair as alt
             
-            # Group by time and store to get availability over time
+            # Create a chart that shows size availability over time
+            chart_df = df.copy()
+            chart_df['product_size'] = chart_df['store'] + ' - ' + chart_df['size']
+            
+            # Group by time and store-size combination
             pivot_df = pd.pivot_table(
-                df,
+                chart_df,
                 index='time',
-                columns='store',
-                values='available_products',
+                columns='product_size',
+                values='available',
                 aggfunc='sum'
             ).reset_index()
             
@@ -401,31 +453,32 @@ try:
             chart_data = pd.melt(
                 pivot_df, 
                 id_vars=['time'], 
-                var_name='Store', 
-                value_name='Available Products'
+                var_name='Product', 
+                value_name='Available Count'
             )
             
             # Create the chart
             chart = alt.Chart(chart_data).mark_line(point=True).encode(
-                x=alt.X('time:N', title='Time'),
-                y=alt.Y('Available Products:Q', title='Products Available'),
-                color=alt.Color('Store:N', title='Store'),
-                tooltip=['time', 'Store', 'Available Products']
+                x=alt.X('time:N', title='Time', sort=None),
+                y=alt.Y('Available Count:Q', title='Products Available'),
+                color=alt.Color('Product:N', title='Store - Size'),
+                tooltip=['time', 'Product', 'Available Count']
             ).properties(
                 width=600,
                 height=300,
-                title='Bamba Availability Trend'
-            )
+                title='Bamba Availability Trend by Size'
+            ).interactive()
             
             st.altair_chart(chart, use_container_width=True)
         except Exception as e:
             # Fallback to basic chart if Altair fails
-            st.line_chart(pivot_df.set_index('time'))
             st.error(f"Advanced chart error: {str(e)}")
+            st.line_chart(pivot_df.set_index('time'))
     else:
         st.info("Not enough history data for trends yet.")
 except Exception as e:
     st.error(f"Error generating history chart: {str(e)}")
+    st.code(f"Error details: {traceback.format_exc()}")
 
 # ─── UNSUBSCRIBE SECTION ─────────────────────────────────────
 st.markdown("---")
