@@ -28,7 +28,7 @@ st.set_page_config(
 )
 
 # Get the query parameters to check for unsubscribe tokens
-query_params = st.experimental_get_query_params()
+query_params = st.query_params
 
 # Check if this is an unsubscribe request
 if "token" in query_params:
