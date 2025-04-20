@@ -199,7 +199,7 @@ with col2:
         # Store preference
         store_preference = st.radio(
             "Which store(s) would you like alerts for?",
-            options=["Both stores", "Dianella only לא יוצא מהגטו", "Mirrabooka only יש עוד עולם מחוץ לגטו??? לא חושב"],
+            options=["Both stores", "Dianella only לא יוצא מהגטו", "Mirrabooka only יש עוד עולם מחוץ לגטו?!"],
             index=0
         )
         
@@ -213,7 +213,7 @@ with col2:
         # Notification preferences - CHANGED THIS LINE
         cols = st.columns(2)
         with cols[0]:
-            notify_every_check = st.checkbox("Send me updates on every check (even when nothing changes) אין לי חיים חוץ מבמבה בקיצור, את אמא שלי הייתי מוכר בשביל מנת בוטנים", value=False)
+            notify_every_check = st.checkbox("Send me updates on every check (even when nothing changes) אין לי חיים חוץ מבמבה! בקיצור, את אמא שלי הייתי מוכר בשביל מנת בוטנים", value=False)
         with cols[1]:
             include_facts = st.checkbox("Include Bamba facts with notifications אני רוצה עובדות על במבה שיהיה לי מה לקרוא בשירותים", value=False)
     
