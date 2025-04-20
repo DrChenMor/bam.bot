@@ -22,7 +22,7 @@ def format_awst_time(timestamp_str):
 
 # ─── PAGE CONFIG & FONT ──────────────────────────────────────
 st.set_page_config(
-    page_title="Bam.Bot - Bamba Tracker",
+    page_title="BamBot - Bamba Tracker",
     layout="centered",
     page_icon="bamlogo.png"
 )
@@ -152,7 +152,7 @@ st.markdown("""
 col_en, col_he = st.columns(2)
 
 with col_en:
-    st.markdown("<h2>🥜 Bam.Bot WA Availability Tracker Signup</h2>", unsafe_allow_html=True)
+    st.markdown("<h2>🥜 BamBot WA Availability Tracker Signup</h2>", unsafe_allow_html=True)
     st.markdown(
         """
         <div>
