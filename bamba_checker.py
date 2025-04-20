@@ -300,11 +300,11 @@ def send_notifications(store_results, subscribers):
     # Build a consolidated notification for each subscriber
     for subscriber in subscribers:
         # Skip subscribers who want change notifications if nothing changed
-        if subscriber.get("notify_on_change_only", False):
+        if subscriber.get("notify_on_change_only", True):  # Default is now TRUE
             has_relevant_changes = False
             for store_name, store_changes in changes.items():
                 if store_changes and (subscriber.get("store_preference", "both") == "both" or 
-                                    subscriber.get("store_preference", "both") == store_name.lower()):
+                                     subscriber.get("store_preference", "both") == store_name.lower()):
                     has_relevant_changes = True
                     break
             
@@ -384,10 +384,20 @@ def send_notifications(store_results, subscribers):
         
         body += "<p>Happy snacking! 🤖</p>"
         
+        # Add unsubscribe link
+        try:
+            from supabase_client import generate_unsubscribe_token
+            unsubscribe_token = generate_unsubscribe_token(subscriber["email"])
+            # Use the URL of your Streamlit app
+            app_url = "https://yourstreamlitapp.streamlit.app"  # Replace with your actual Streamlit URL
+            body += f'<p style="color: #777; font-size: 0.8em; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px;">Don\'t want these emails? <a href="{app_url}?token={unsubscribe_token}">Unsubscribe</a></p>'
+        except Exception as e:
+            print(f"Error generating unsubscribe link: {e}")
+        
         # Send the email
         send_email(subscriber["email"], subject, body)
         print(f"  ✉️ Consolidated email sent to {subscriber['email']}")
-
+        
 # ─────────────────────────────────────────────────────────────
 # 8) MAIN
 # ─────────────────────────────────────────────────────────────
