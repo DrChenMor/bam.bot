@@ -161,7 +161,7 @@ with col_en:
     """)
 
 with col_he:
-    st.markdown("<h2 dir='rtl'>הרשמה למעכב במבה - 🥜 במבוט WA</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 dir='rtl'>🥜 במבוט WA - הרשמה למעקב על במבה</h2>", unsafe_allow_html=True)
     st.markdown(
         """
         <div dir="rtl">
