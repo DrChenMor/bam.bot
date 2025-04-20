@@ -160,8 +160,10 @@ with col_en:
         <p><b>**Daily summary**</b> – One friendly recap at 15:00 AWST.</p>  
         <p>🔐 We keep your address **encrypted**— only our bot can read it.<,p>
         </div>
-        """)
-
+        """,
+        unsafe_allow_html=True,
+    )
+    
 with col_he:
     st.markdown("<h2 dir='rtl'>🥜 במבוט WA - הרשמה למעקב על במבה</h2>", unsafe_allow_html=True)
     st.markdown(
