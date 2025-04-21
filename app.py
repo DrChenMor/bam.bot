@@ -64,33 +64,8 @@ st.set_page_config(
 query_params = st.query_params
 
 # Enhanced unsubscribe handler in app.py
-if "token" in query_params:
-    try:
-        from supabase_client import verify_unsubscribe_token, unsubscribe_email
         
-        token = query_params["token"][0]
-        # Debug output (you can remove this later)
-        st.write(f"Debug - Token received: {token[:10]}...")
-        
-        # Try to verify the token with detailed error handling
-        try:
-            email = verify_unsubscribe_token(token)
-            if email:
-                st.write(f"Debug - Token verified for: {email}")
-            else:
-                st.write("Debug - Token verification failed")
-                
-                # Get the actual Fernet key being used (partially masked for security)
-                import os
-                key = os.getenv("FERNET_KEY", "")
-                if key:
-                    st.write(f"Debug - Using Fernet key: {key[:5]}...{key[-5:]}")
-                else:
-                    st.write("Debug - Fernet key not found in environment")
-        except Exception as e:
-            st.write(f"Debug - Token verification error: {str(e)}")
-        
-        st.title("Unsubscribe from Bamba Tracker")
+st.title("Unsubscribe from Bamba Tracker")
         
         # Continue with enhanced manual unsubscribe form
         st.write("### Unsubscribe by Email")
