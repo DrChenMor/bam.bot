@@ -302,10 +302,27 @@ def send_notifications(store_results, subscribers):
         # Skip subscribers who want change notifications if nothing changed
         if subscriber.get("notify_on_change_only", True):  # Default is now TRUE
             has_relevant_changes = False
+            size_pref = subscriber.get("product_size_preference", "both")
+            
             for store_name, store_changes in changes.items():
-                if store_changes and (subscriber.get("store_preference", "both") == "both" or 
-                                     subscriber.get("store_preference", "both") == store_name.lower()):
-                    has_relevant_changes = True
+                # Skip if not interested in this store
+                if subscriber.get("store_preference", "both") != "both" and subscriber.get("store_preference", "both") != store_name.lower():
+                    continue
+                    
+                # Check if any changes are relevant to this subscriber's size preference
+                for change in store_changes:
+                    product_name = change["product"]
+                    # Extract size from product name
+                    size = "Unknown"
+                    if "|" in product_name:
+                        size = product_name.split("|")[1].strip()
+                        
+                    # Check if this product matches the size preference
+                    if size_pref == "both" or (size_pref == "25g" and "25g" in size) or (size_pref == "100g" and "100g" in size):
+                        has_relevant_changes = True
+                        break
+                        
+                if has_relevant_changes:
                     break
             
             if not has_relevant_changes:
