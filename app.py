@@ -62,49 +62,46 @@ st.set_page_config(
 # Get the query parameters to check for unsubscribe tokens
 query_params = st.query_params
 
-# Check if this is an unsubscribe request
+# Enhanced unsubscribe handler in app.py
 if "token" in query_params:
     try:
         from supabase_client import verify_unsubscribe_token, unsubscribe_email
         
         token = query_params["token"][0]
-        # Show token information for debugging
+        # Debug output (you can remove this later)
         st.write(f"Debug - Token received: {token[:10]}...")
         
-        # Try to verify the token
-        email = verify_unsubscribe_token(token)
-        
-        # Show result of verification
-        if email is None:
-            st.write("Debug - Token verification failed")
-        else:
-            st.write(f"Debug - Token verified for: {email}")
+        # Try to verify the token with detailed error handling
+        try:
+            email = verify_unsubscribe_token(token)
+            if email:
+                st.write(f"Debug - Token verified for: {email}")
+            else:
+                st.write("Debug - Token verification failed")
+                
+                # Get the actual Fernet key being used (partially masked for security)
+                import os
+                key = os.getenv("FERNET_KEY", "")
+                if key:
+                    st.write(f"Debug - Using Fernet key: {key[:5]}...{key[-5:]}")
+                else:
+                    st.write("Debug - Fernet key not found in environment")
+        except Exception as e:
+            st.write(f"Debug - Token verification error: {str(e)}")
         
         st.title("Unsubscribe from Bamba Tracker")
         
-        if email:
-            if st.button("Confirm Unsubscribe"):
-                if unsubscribe_email(email):
-                    st.success(f"You have been unsubscribed. You will no longer receive Bamba notifications. תמות! בייייי")
+        # Continue with enhanced manual unsubscribe form
+        st.write("### Unsubscribe by Email")
+        manual_email = st.text_input("Enter your email address:")
+        if st.button("Unsubscribe"):
+            if manual_email and "@" in manual_email:
+                if unsubscribe_email(manual_email):
+                    st.success(f"You have been unsubscribed. You will no longer receive Bamba notifications.")
                 else:
-                    st.error("There was a problem processing your request. Please try again later.")
+                    st.warning("Email not found in our subscriber list or already unsubscribed.")
             else:
-                st.write(f"Are you sure you want to unsubscribe {email} from Bamba availability notifications?")
-                st.write("Click the button above to confirm.")
-        else:
-            st.error("Invalid or expired unsubscribe link. Please check your email for a valid unsubscribe link.")
-            
-            # Add manual unsubscribe option
-            st.write("### Try manual unsubscribe")
-            manual_email = st.text_input("Enter your email address:")
-            if st.button("Unsubscribe Manually"):
-                if manual_email and "@" in manual_email:
-                    if unsubscribe_email(manual_email):
-                        st.success(f"You have been unsubscribed. You will no longer receive Bamba notifications.")
-                    else:
-                        st.warning("Email not found in our subscriber list or already unsubscribed.")
-                else:
-                    st.error("Please enter a valid email address.")
+                st.error("Please enter a valid email address.")
                     
         # Stop here - don't show the main app
         st.stop()
