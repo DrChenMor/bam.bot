@@ -360,6 +360,36 @@ if st.button("Subscribe", use_container_width=True):
                     with open(subfile,"w") as fp:
                         json.dump(data, fp, indent=2)
                     st.success("🎉 You're signed up! Check your inbox soon.")
+                                    # … your existing st.success() …
+                st.success("🎉 You're signed up! Check your inbox soon.")
+
+                # --- HERE: send the welcome email in local‑file mode ---
+                try:
+                    # 1) build the subject & HTML body
+                    welcome_subject = "👋 Welcome to Bamba Tracker!"
+                    welcome_html = f\"\"\"
+                    <style>
+                    .container {{ font-family: Arial, sans-serif; max-width:600px; margin:0 auto; }}
+                    .header {{ color: #4CAF50; font-size: 24px; }}
+                    </style>
+                    <div class="container">
+                      <div class="header">Welcome to Bamba Tracker!</div>
+                      <p>Thanks for subscribing to real‑time Bamba availability alerts in Perth.</p>
+                      <ul>
+                        <li><b>Mode:</b> {preferences["mode"]}</li>
+                        <li><b>Stores:</b> {preferences["store_preference"]}</li>
+                        <li><b>Sizes:</b> {preferences["product_size_preference"]}</li>
+                      </ul>
+                      <p>We’ll keep you nuttily updated! 🤪</p>
+                    </div>
+                    \"\"\"
+
+                    # 2) actually send it
+                    send_email(email, welcome_subject, welcome_html)
+                    st.info("✅ Welcome email sent!")
+                except Exception as e:
+                    st.error(f"Error sending welcome email: {e}")
+
         except Exception as e:
             st.error(f"Subscription error: {str(e)}")
                 
