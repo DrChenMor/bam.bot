@@ -124,7 +124,7 @@ def verify_unsubscribe_token(token):
         email, timestamp = message.split('|')
         # Check if token is expired (e.g., after 30 days)
         token_time = datetime.fromtimestamp(int(timestamp))
-        if (datetime.now() - token_time).days > 30:
+        if (datetime.now() - token_time).days > 365:
             return None  # Token expired
         return email
     except Exception:
