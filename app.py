@@ -534,3 +534,42 @@ with st.expander("Unsubscribe from Notifications"):
                     st.error(f"Error unsubscribing: {str(e)}")
         else:
             st.error("Please enter a valid email address.")
+            
+# ─── APP FOOTER ────────────────────────────────────────────
+st.markdown("---")
+
+footer_col1, footer_col2, footer_col3 = st.columns(3)
+
+with footer_col1:
+    st.markdown(
+        """
+        <div style="text-align: center;">
+            <h4>About</h4>
+            <p>Bamba Tracker helps the Perth Israeli community find their 'favorite' snack. / מוזמנים להזמין אותי לשבת איתכם לשיחה עם במבה יבשה בלבד או ביסלי גריל שהוא החטיף האולטימטיבי, וכמובן אפרופו שהוא בכלל עוד להיט מאילנית</p>
+        </div>
+        """, 
+        unsafe_allow_html=True
+    )
+
+with footer_col2:
+    st.markdown(
+        """
+        <div style="text-align: center;">
+            <h4>Contact in case of emergency</h4>
+            <p>Email: <a href="mailto:bambotwa@gmail.com">bambotwa@gmail.com</a></p>
+        </div>
+        """, 
+        unsafe_allow_html=True
+    )
+
+with footer_col3:
+    st.markdown(
+        """
+        <div style="text-align: center;">
+            <h4>Credits</h4>
+            <p>Created by Chen Mor</p>
+            <p>© 2025 All rights reserved to no one</p>
+        </div>
+        """, 
+        unsafe_allow_html=True
+    )
