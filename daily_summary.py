@@ -91,24 +91,22 @@ for run in runs:
         html += "</ul>"
     html += "<hr>"
 
+# Add the closing message
 html += "<p>That's all for today! Keep it nutty 🤪</p>"
-# ─── EMAIL DAILY SUBSCRIBERS ─────────────────────────────────
+
+# Add unsubscribe link
 if use_supabase:
-    # Get subscribers from Supabase
-    daily_subscribers = get_subscribers(mode="daily")
-    for sub in daily_subscribers:
-        # Add a Bamba fact if subscribed
-        fact_section = ""
-        if sub.get("include_facts", False):
-            fact = get_random_bamba_fact()
-            fact_section = f"""
-            <div style='background-color: #f8f9fa; padding: 10px; margin: 10px 0; border-left: 4px solid #ffc107;'>
-            <h3>🌟 Bamba Fact of the Day</h3>
-            <p>{fact}</p>
-            </div>
-            """
-        
-        # Send the email with customized content based on preferences
-        complete_html = fact_section + html
-        subject = "🌰 Your Bamba Daily Roundup is here!"
-        send_email(sub["email"], subject, complete_html)
+    try:
+        # For each subscriber, generate a unique unsubscribe token
+        for sub in daily_subscribers:
+            from supabase_client import generate_unsubscribe_token
+            unsubscribe_token = generate_unsubscribe_token(sub["email"])
+            # Use the URL of your Streamlit app
+            app_url = "https://bambot.streamlit.app/"
+            sub_html = html + f'<p style="color: #777; font-size: 0.8em; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px;">Don\'t want these emails? <a href="{app_url}?token={unsubscribe_token}">Unsubscribe</a></p>'
+            
+            # Send the email with the unsubscribe link
+            subject = "🌰 Your Bamba Daily Roundup is here!"
+            send_email(sub["email"], subject, sub_html)
+    except Exception as e:
+        print(f"Error generating unsubscribe link: {e}")
