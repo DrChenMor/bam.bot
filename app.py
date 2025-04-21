@@ -367,7 +367,7 @@ if st.button("Subscribe", use_container_width=True):
                 try:
                     # 1) build the subject & HTML body
                     welcome_subject = "👋 Welcome to Bamba Tracker!"
-                    welcome_html = f\"\"\"
+                    welcome_html = f"""
                     <style>
                     .container {{ font-family: Arial, sans-serif; max-width:600px; margin:0 auto; }}
                     .header {{ color: #4CAF50; font-size: 24px; }}
@@ -382,7 +382,12 @@ if st.button("Subscribe", use_container_width=True):
                       </ul>
                       <p>We’ll keep you nuttily updated! 🤪</p>
                     </div>
-                    \"\"\"
+                    """
+                            # And send it
+                    send_email(email, welcome_subject, welcome_html)
+                    st.info("✅ Welcome email sent!")
+                except Exception as e:
+                    st.error(f"Error sending welcome email: {e}")
 
                     # 2) actually send it
                     send_email(email, welcome_subject, welcome_html)
