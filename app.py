@@ -42,7 +42,15 @@ if "token" in query_params:
         from supabase_client import verify_unsubscribe_token, unsubscribe_email
         
         token = query_params["token"][0]
+
+        st.write(f"Debug - Token received: {token[:10]}...")
+        
         email = verify_unsubscribe_token(token)
+        
+        if email is None:
+            st.write("Debug - Token verification failed")
+        else:
+            st.write(f"Debug - Token verified for: {email}")
         
         st.title("Unsubscribe from Bamba Tracker")
         
