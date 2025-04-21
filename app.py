@@ -34,11 +34,12 @@ SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 SMTP_USER = os.getenv("SMTP_USER")
 SMTP_PASS = os.getenv("SMTP_PASS")
-FROM_EMAIL = os.getenv("FROM_EMAIL", SMTP_USER)
-
+FROM_EMAIL = os.getenv("FROM_EMAIL")
+if not FROM_EMAIL:
+    FROM_EMAIL = os.getenv("SMTP_USER", "")
+    print(f"Warning: FROM_EMAIL not set, falling back to SMTP_USER: {FROM_EMAIL}")
 def send_email(to_email, subject, html_content):
     """Send an email with HTML content."""
-    # Add this debugging line
     print(f"Sending from: {FROM_EMAIL}, SMTP user: {SMTP_USER}")
     
     msg = MIMEMultipart("alternative")
