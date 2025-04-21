@@ -4,6 +4,7 @@ from datetime import datetime
 import pytz
 import traceback
 import smtplib
+from supabase_client import unsubscribe_email  # make sure this is at the top of your file
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -60,30 +61,24 @@ st.set_page_config(
     page_icon="bamlogo.png"
 )
 
-# Get the query parameters to check for unsubscribe tokens
-query_params = st.query_params
 
-# Enhanced unsubscribe handler in app.py
-        
 st.title("Unsubscribe from Bamba Tracker")
-        
-        # Continue with enhanced manual unsubscribe form
-        st.write("### Unsubscribe by Email")
-        manual_email = st.text_input("Enter your email address:")
-        if st.button("Unsubscribe"):
-            if manual_email and "@" in manual_email:
-                if unsubscribe_email(manual_email):
-                    st.success(f"You have been unsubscribed. You will no longer receive Bamba notifications.")
-                else:
-                    st.warning("Email not found in our subscriber list or already unsubscribed.")
+st.write("### Unsubscribe by Email")
+
+manual_email = st.text_input("Enter your email address:")
+if st.button("Unsubscribe"):
+    if manual_email and "@" in manual_email:
+        try:
+            if unsubscribe_email(manual_email):
+                st.success("You have been unsubscribed. You will no longer receive Bamba notifications.")
             else:
-                st.error("Please enter a valid email address.")
-                    
-        # Stop here - don't show the main app
-        st.stop()
-    except Exception as e:
-        st.error(f"Error processing unsubscribe request: {str(e)}")
-        st.error("Please try the manual unsubscribe option at the bottom of the page.")
+                st.warning("Email not found in our subscriber list or already unsubscribed.")
+        except Exception as e:
+            st.error(f"Error unsubscribing: {e}")
+    else:
+        st.error("Please enter a valid email address.")
+
+st.stop()  # nothing below this will render
 
 # Try to import Supabase client
 try:
