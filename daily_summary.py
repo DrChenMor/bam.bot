@@ -63,17 +63,35 @@ if not runs:
     print("No runs found in history."); exit(0)
 
 html = "<h2>🥜 Bamba Daily Chuckle & Check</h2>"
-
-html = "<h2>🥜 Bamba Daily Chuckle & Check</h2>"
 for run in runs:
     ts = run[0]["timestamp"].split("T")[1][:8]
-    html += f"<h3>🔍 Checked at {ts} AWST</h3><ul>"
-    for s in run:
-        mark = "✅" if s["available"] else "❌"
-        html += f"<li>{mark} {s['store']} — saw {len(s['products'])} products</li>"
-    html += "</ul>"
-html += "<p>That's all for today! Keep it nutty 🤪</p>"
+    html += f"<h3>🔍 Checked at {ts} AWST</h3>"
+    
+    for store_data in run:
+        store_name = store_data["store"]
+        mark = "✅" if store_data["available"] else "❌"
+        html += f"<h4>{mark} {store_name}</h4>"
+        
+        if not store_data["products"]:
+            html += "<p>No Bamba products found at this store.</p>"
+            continue
+        
+        html += "<ul>"
+        for product in store_data["products"]:
+            # Extract size from product name if available
+            size = "Unknown size"
+            if "|" in product["name"]:
+                product_name = product["name"].split("|")[0].strip()
+                size = product["name"].split("|")[1].strip()
+            else:
+                product_name = product["name"]
+                
+            status = "✅ Available" if product["available"] else "❌ Currently Unavailable"
+            html += f"<li><strong>{product_name}</strong> ({size}) - {status}<br>Price: {product['price']}</li>"
+        html += "</ul>"
+    html += "<hr>"
 
+html += "<p>That's all for today! Keep it nutty 🤪</p>"
 # ─── EMAIL DAILY SUBSCRIBERS ─────────────────────────────────
 if use_supabase:
     # Get subscribers from Supabase
