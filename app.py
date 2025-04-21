@@ -3,6 +3,9 @@ from cryptography.fernet import Fernet
 from datetime import datetime
 import pytz
 import traceback
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 def format_awst_time(ts):
     """Convert any timestamp to AWST formatted time."""
@@ -26,6 +29,26 @@ def format_awst_time(ts):
     awst_time = dt.astimezone(awst)
     return awst_time.strftime('%Y-%m-%d %H:%M:%S AWST')
 
+# Email configuration
+SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
+SMTP_USER = os.getenv("SMTP_USER")
+SMTP_PASS = os.getenv("SMTP_PASS")
+FROM_EMAIL = os.getenv("FROM_EMAIL", SMTP_USER)
+
+def send_email(to_email, subject, html_content):
+    """Send an email with HTML content."""
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"] = FROM_EMAIL
+    msg["To"] = to_email
+    msg.attach(MIMEText(html_content, "html"))
+    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as s:
+        s.starttls()
+        s.login(SMTP_USER, SMTP_PASS)
+        s.sendmail(FROM_EMAIL, to_email, msg.as_string())
+    print(f"Email sent to {to_email}")
+    
 # ─── PAGE CONFIG & FONT ──────────────────────────────────────
 st.set_page_config(
     page_title="BamBot - Bamba Tracker",
