@@ -115,19 +115,38 @@ def verify_unsubscribe_token(token):
     try:
         # Replace URL-safe characters back
         token = token.replace('-', '+').replace('_', '/')
+        
         # Decrypt using your Fernet key
         from cryptography.fernet import Fernet
         fernet_key = os.getenv("FERNET_KEY")
-        f = Fernet(fernet_key.encode())
-        message = f.decrypt(token.encode()).decode()
+        if not fernet_key:
+            print("FERNET_KEY environment variable not found")
+            return None
+            
+        try:
+            f = Fernet(fernet_key.encode())
+            message = f.decrypt(token.encode()).decode()
+        except Exception as e:
+            print(f"Token decryption error: {str(e)}")
+            return None
+            
         # Split to get email and timestamp
-        email, timestamp = message.split('|')
-        # Check if token is expired (e.g., after 30 days)
+        try:
+            email, timestamp = message.split('|')
+        except ValueError:
+            print(f"Invalid token format. Expected 'email|timestamp', got: {message}")
+            return None
+            
+        # Check if token is expired (extend to 365 days)
         token_time = datetime.fromtimestamp(int(timestamp))
-        if (datetime.now() - token_time).days > 365:
-            return None  # Token expired
+        if (datetime.now() - token_time).days > 365:  # Extended from 30 to 365 days
+            print(f"Token expired. Created on {token_time.isoformat()}")
+            return None
+            
         return email
-    except Exception:
+        
+    except Exception as e:
+        print(f"Token verification error: {str(e)}")
         return None  # Invalid token
 
 def unsubscribe_email(email):
