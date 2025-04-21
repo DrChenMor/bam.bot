@@ -415,7 +415,8 @@ try:
         
         # Format the time column
         if 'time' in df.columns:
-            df['time'] = pd.to_datetime(df['time']).dt.strftime('%Y-%m-%d %H:%M')
+            df['time'] = pd.to_datetime(df['time'])
+            df['Time'] = df['time'].apply(format_awst_time)
         
         # Create a display-friendly dataframe
         display_df = df[['time', 'store', 'size', 'available', 'total', 'availability_pct']].rename(
