@@ -231,28 +231,67 @@ with st.expander("Advanced Subscription Options"):
     
 email = st.text_input("Your email / כתובת המייל שלך")
     
+# Find this section in app.py (around line 326)
 if st.button("Subscribe", use_container_width=True):
     if not email or "@" not in email:
         st.error("Please enter a valid email address")
     else:
         try:
-                # Convert UI selections to database format
+            # Convert UI selections to database format
             preferences = {
                 "mode": "immediate" if mode.startswith("Immediate") else "daily",
                 "store_preference": "both" if store_preference == "Both stores" else store_preference.replace(" only", "").lower(),
                 "product_size_preference": "both" if size_preference == "Both sizes" else size_preference.replace(" only", "").lower(),
-                "notify_on_change_only": not notify_every_check,  # INVERTED THE VALUE HERE
+                "notify_on_change_only": not notify_every_check,
                 "include_facts": include_facts
             }
                 
-                # Try to use Supabase if available
+            # Try to use Supabase if available
             if use_supabase:
                 try:
-                        # Add to Supabase with detailed error logging
+                    # Add to Supabase with detailed error logging
                     result = add_subscriber(email, preferences)
                         
                     if result["status"] == "created":
                         st.success("🎉 You're signed up! Check your inbox soon.")
+                        
+                        # *** ADD THE WELCOME EMAIL CODE HERE ***
+                        try:
+                            # Create welcome email HTML
+                            welcome_subject = "👋 Welcome to Bamba Tracker!"
+                            welcome_html = f"""
+                            <style>
+                            .container {{font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;}}
+                            .header {{color: #4CAF50; font-size: 24px;}}
+                            .section {{margin: 15px 0;}}
+                            </style>
+                            <div class="container">
+                                <h1 class="header">Welcome to Bamba Tracker!</h1>
+                                <p>Hi there,</p>
+                                <p>Thanks for subscribing to Bamba Tracker! You'll now receive updates about Bamba availability at Coles stores in Perth.</p>
+                                
+                                <div class="section">
+                                    <h3>Your subscription details:</h3>
+                                    <ul>
+                                        <li><strong>Notification mode:</strong> {preferences['mode']}</li>
+                                        <li><strong>Store preference:</strong> {preferences['store_preference']}</li>
+                                        <li><strong>Size preference:</strong> {preferences['product_size_preference']}</li>
+                                    </ul>
+                                </div>
+                                
+                                <p>We'll keep you updated on Bamba availability according to your preferences. Keep it nutty! 🤪</p>
+                                
+                                <p style="color: #777; margin-top: 20px;">Your BamBot WA</p>
+                            </div>
+                            """
+                            
+                            # Send the welcome email
+                            send_email(email, welcome_subject, welcome_html)
+                            print(f"Welcome email sent to {email}")
+                        except Exception as e:
+                            print(f"Error sending welcome email: {e}")
+                        # *** END OF WELCOME EMAIL CODE ***
+                        
                     else:
                         st.success("✅ Your subscription preferences have been updated.")
                 except Exception as e:
