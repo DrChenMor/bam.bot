@@ -42,11 +42,13 @@ if "token" in query_params:
         from supabase_client import verify_unsubscribe_token, unsubscribe_email
         
         token = query_params["token"][0]
-
+        # Show token information for debugging
         st.write(f"Debug - Token received: {token[:10]}...")
         
+        # Try to verify the token
         email = verify_unsubscribe_token(token)
         
+        # Show result of verification
         if email is None:
             st.write("Debug - Token verification failed")
         else:
@@ -65,7 +67,19 @@ if "token" in query_params:
                 st.write("Click the button above to confirm.")
         else:
             st.error("Invalid or expired unsubscribe link. Please check your email for a valid unsubscribe link.")
-        
+            
+            # Add manual unsubscribe option
+            st.write("### Try manual unsubscribe")
+            manual_email = st.text_input("Enter your email address:")
+            if st.button("Unsubscribe Manually"):
+                if manual_email and "@" in manual_email:
+                    if unsubscribe_email(manual_email):
+                        st.success(f"You have been unsubscribed. You will no longer receive Bamba notifications.")
+                    else:
+                        st.warning("Email not found in our subscriber list or already unsubscribed.")
+                else:
+                    st.error("Please enter a valid email address.")
+                    
         # Stop here - don't show the main app
         st.stop()
     except Exception as e:
