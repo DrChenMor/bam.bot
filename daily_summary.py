@@ -48,9 +48,21 @@ def send_email(to, subj, html):
 # ─── BUILD SUMMARY ───────────────────────────────────────────
 hist = json.load(open("history.json"))
 today = get_awst_time().date().isoformat()
-runs  = [r for r in hist["runs"] if r and r[0]["timestamp"].startswith(today)]
+
+# First try to get runs from today
+runs = [r for r in hist["runs"] if r and r[0]["timestamp"].startswith(today)]
+
+# If no runs today, use the most recent runs instead
+if not runs and hist["runs"]:
+    # Use the most recent run date
+    latest_run = hist["runs"][-1]
+    latest_date = latest_run[0]["timestamp"].split("T")[0]
+    runs = [r for r in hist["runs"] if r and r[0]["timestamp"].startswith(latest_date)]
+
 if not runs:
-    print("No runs today."); exit(0)
+    print("No runs found in history."); exit(0)
+
+html = "<h2>🥜 Bamba Daily Chuckle & Check</h2>"
 
 html = "<h2>🥜 Bamba Daily Chuckle & Check</h2>"
 for run in runs:
