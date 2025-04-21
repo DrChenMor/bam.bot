@@ -38,6 +38,9 @@ FROM_EMAIL = os.getenv("FROM_EMAIL", SMTP_USER)
 
 def send_email(to_email, subject, html_content):
     """Send an email with HTML content."""
+    # Add this debugging line
+    print(f"Sending from: {FROM_EMAIL}, SMTP user: {SMTP_USER}")
+    
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"] = FROM_EMAIL
