@@ -4,13 +4,19 @@ from datetime import datetime
 import pytz
 import traceback
 
-def format_awst_time(timestamp_str):
+def format_awst_time(ts):
     """Convert any timestamp to AWST formatted time."""
-    if 'T' in timestamp_str:
-        dt = datetime.fromisoformat(timestamp_str.replace('Z', '+00:00'))
+    if isinstance(ts, str):
+        # Handle string timestamps
+        if 'T' in ts:
+            dt = datetime.fromisoformat(ts.replace('Z', '+00:00'))
+        else:
+            dt = datetime.fromisoformat(ts)
     else:
-        dt = datetime.fromisoformat(timestamp_str)
-    
+        # It's already a datetime object
+        dt = ts
+        
+    # Ensure timezone info exists
     if dt.tzinfo is None:
         # Assume UTC if no timezone
         dt = dt.replace(tzinfo=pytz.utc)
