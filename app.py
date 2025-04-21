@@ -4,7 +4,6 @@ from datetime import datetime
 import pytz
 import traceback
 import smtplib
-from supabase_client import unsubscribe_email  # make sure this is at the top of your file
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
