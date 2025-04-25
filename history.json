@@ -3,42 +3,6 @@
     [
       {
         "store": "Dianella",
-        "timestamp": "2025-04-23T12:47:45.017476+08:00",
-        "available": false,
-        "products": [
-          {
-            "name": "Osem Bamba Peanut Snack KB | 25g",
-            "price": "$1.75",
-            "available": false
-          },
-          {
-            "name": "Osem Bamba Peanut Snack | 100g",
-            "price": "n/a",
-            "available": false
-          }
-        ]
-      },
-      {
-        "store": "Mirrabooka",
-        "timestamp": "2025-04-23T12:48:04.080012+08:00",
-        "available": true,
-        "products": [
-          {
-            "name": "Osem Bamba Peanut Snack KB | 25g",
-            "price": "$1.75",
-            "available": true
-          },
-          {
-            "name": "Osem Bamba Peanut Snack | 100g",
-            "price": "n/a",
-            "available": false
-          }
-        ]
-      }
-    ],
-    [
-      {
-        "store": "Dianella",
         "timestamp": "2025-04-23T13:39:32.297106+08:00",
         "available": false,
         "products": [
@@ -1119,6 +1083,107 @@
             "name": "Osem Bamba Peanut Snack | 100g",
             "price": "n/a",
             "available": false
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "store": "Dianella",
+        "timestamp": "2025-04-25T18:42:39.215439+08:00",
+        "available": false,
+        "products": [
+          {
+            "name": "Osem Bamba Peanut Snack KB | 25g",
+            "price": "$1.75",
+            "available": false
+          },
+          {
+            "name": "Osem Bamba Peanut Snack | 100g",
+            "price": "n/a",
+            "available": false
+          }
+        ]
+      },
+      {
+        "store": "Mirrabooka",
+        "timestamp": "2025-04-25T18:42:59.035523+08:00",
+        "available": true,
+        "products": [
+          {
+            "name": "Bega Crunchy Peanut Butter | 470g",
+            "price": "$4.80",
+            "available": true
+          },
+          {
+            "name": "Bega Crunchy Peanut Butter | 325g",
+            "price": "$4.70",
+            "available": true
+          },
+          {
+            "name": "Bega Smooth Peanut Butter | 325g",
+            "price": "$4.70",
+            "available": true
+          },
+          {
+            "name": "Bega Smooth Peanut Butter | 470g",
+            "price": "$4.80",
+            "available": true
+          },
+          {
+            "name": "Bega Light Crunchy Peanut Butter | 470g",
+            "price": "$4.80",
+            "available": true
+          },
+          {
+            "name": "Bega Peanut Butter Crunchy | 755g",
+            "price": "$7.40",
+            "available": true
+          },
+          {
+            "name": "Sunbeam Sultana And Cranberry | 6 pack",
+            "price": "$3.20",
+            "available": true
+          },
+          {
+            "name": "Bega Peanut Butter Super Crunchy | 470g",
+            "price": "$4.80",
+            "available": true
+          },
+          {
+            "name": "Blue Frog Granola Pic'S Crunchy Peanut Butter | 350g",
+            "price": "$7.50",
+            "available": true
+          },
+          {
+            "name": "Nice & Natural Nut Butter Bars Peanut Butter & Salted C ... 175g",
+            "price": "$3.25",
+            "available": true
+          },
+          {
+            "name": "Bega Simply Nuts Crunchy Peanut Butter | 650g",
+            "price": "$8.00",
+            "available": true
+          },
+          {
+            "name": "Bega Peanut Butter Smooth | 755g",
+            "price": "$7.40",
+            "available": true
+          },
+          {
+            "name": "Bega Light Smooth Peanut Butter | 470g",
+            "price": "$4.80",
+            "available": true
+          },
+          {
+            "name": "Bega Crunchy Peanut Butter | 375g",
+            "price": "$5.80",
+            "available": true
+          },
+          {
+            "name": "Mr. Beast Feastables Peanut Butter Crunch | 60 GRAM",
+            "price": "$2.00",
+            "available": true
           }
         ]
       }
