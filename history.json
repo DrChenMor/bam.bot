@@ -3,42 +3,6 @@
     [
       {
         "store": "Dianella",
-        "timestamp": "2025-05-04T07:30:26.267297+08:00",
-        "available": true,
-        "products": [
-          {
-            "name": "Osem Bamba Peanut Snack KB | 25g",
-            "price": "$1.75",
-            "available": true
-          },
-          {
-            "name": "Osem Bamba Peanut Snack | 100g",
-            "price": "n/a",
-            "available": false
-          }
-        ]
-      },
-      {
-        "store": "Mirrabooka",
-        "timestamp": "2025-05-04T07:30:44.363010+08:00",
-        "available": false,
-        "products": [
-          {
-            "name": "Osem Bamba Peanut Snack KB | 25g",
-            "price": "$1.75",
-            "available": false
-          },
-          {
-            "name": "Osem Bamba Peanut Snack | 100g",
-            "price": "n/a",
-            "available": false
-          }
-        ]
-      }
-    ],
-    [
-      {
-        "store": "Dianella",
         "timestamp": "2025-05-04T11:34:08.369974+08:00",
         "available": true,
         "products": [
@@ -1076,6 +1040,107 @@
             "name": "Osem Bamba Peanut Snack | 100g",
             "price": "n/a",
             "available": false
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "store": "Dianella",
+        "timestamp": "2025-05-06T16:50:18.618261+08:00",
+        "available": false,
+        "products": [
+          {
+            "name": "Osem Bamba Peanut Snack KB | 25g",
+            "price": "$1.75",
+            "available": false
+          },
+          {
+            "name": "Osem Bamba Peanut Snack | 100g",
+            "price": "n/a",
+            "available": false
+          }
+        ]
+      },
+      {
+        "store": "Mirrabooka",
+        "timestamp": "2025-05-06T16:50:43.774975+08:00",
+        "available": true,
+        "products": [
+          {
+            "name": "Bega Crunchy Peanut Butter | 470g",
+            "price": "$6.90",
+            "available": true
+          },
+          {
+            "name": "Bega Crunchy Peanut Butter | 325g",
+            "price": "$4.70",
+            "available": true
+          },
+          {
+            "name": "Bega Smooth Peanut Butter | 325g",
+            "price": "$4.70",
+            "available": true
+          },
+          {
+            "name": "Bega Smooth Peanut Butter | 470g",
+            "price": "$6.90",
+            "available": true
+          },
+          {
+            "name": "Bega Light Crunchy Peanut Butter | 470g",
+            "price": "$6.90",
+            "available": true
+          },
+          {
+            "name": "Bega Whipped Peanut Butter | 600g",
+            "price": "$8.00",
+            "available": false
+          },
+          {
+            "name": "Bega Peanut Butter Crunchy | 755g",
+            "price": "$7.40",
+            "available": true
+          },
+          {
+            "name": "Sunbeam Sultana And Cranberry | 6 pack",
+            "price": "$4.00",
+            "available": true
+          },
+          {
+            "name": "Bega Peanut Butter Super Crunchy | 470g",
+            "price": "$6.90",
+            "available": true
+          },
+          {
+            "name": "Blue Frog Granola Pic'S Crunchy Peanut Butter | 350g",
+            "price": "$9.50",
+            "available": true
+          },
+          {
+            "name": "Nice & Natural Nut Butter Bars Peanut Butter & Salted C ... 175g",
+            "price": "$6.50",
+            "available": true
+          },
+          {
+            "name": "Bega Simply Nuts Crunchy Peanut Butter | 650g",
+            "price": "$8.00",
+            "available": true
+          },
+          {
+            "name": "Bega Peanut Butter Smooth | 755g",
+            "price": "$7.40",
+            "available": true
+          },
+          {
+            "name": "Bega Light Smooth Peanut Butter | 470g",
+            "price": "$6.90",
+            "available": true
+          },
+          {
+            "name": "Bega Crunchy Peanut Butter | 375g",
+            "price": "$4.50",
+            "available": true
           }
         ]
       }
