@@ -182,7 +182,11 @@ def check_store(store):
                     title    = title_el.first.inner_text().strip() if title_el.count() else "Unknown"
                     price_el = t.locator("span.price__value, span.price, [data-testid='product-pricing']")
                     price    = price_el.first.inner_text().strip() if price_el.count() else "n/a"
-                    unavailable = t.locator("[data-testid='large-screen-currently-unavailable-prompt']").count()>0
+                    
+                    # --- THIS IS THE CORRECTED LINE ---
+                    # Instead of a data-testid, we look for the visible text, which is more robust.
+                    unavailable = t.locator("text=Currently unavailable").count() > 0
+                    
                     available   = not unavailable
                     mark        = "✅" if available else "❌"
                     result["products"].append({"name":title,"price":price,"available":available})
@@ -195,7 +199,7 @@ def check_store(store):
             browser.close()
             print(f"  🧹 Closed browser for {store['name']}")
     return result
-
+    
 # ─────────────────────────────────────────────────────────────
 # 5) APPEND TO HISTORY
 # ─────────────────────────────────────────────────────────────
