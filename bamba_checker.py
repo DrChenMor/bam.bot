@@ -180,6 +180,12 @@ def check_store(store):
                 for t in tiles:
                     title_el = t.locator("h2.product__title, h3")
                     title    = title_el.first.inner_text().strip() if title_el.count() else "Unknown"
+
+                    # Filter out non-Bamba products
+                    if "bamba" not in title.lower():
+                        print(f"  🚫 Skipping non-Bamba product: {title}")
+                        continue
+
                     price_el = t.locator("span.price__value, span.price, [data-testid='product-pricing']")
                     price    = price_el.first.inner_text().strip() if price_el.count() else "n/a"
                     
