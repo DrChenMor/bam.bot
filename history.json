@@ -3,42 +3,6 @@
     [
       {
         "store": "Dianella",
-        "timestamp": "2025-08-09T14:38:55.263886+08:00",
-        "available": true,
-        "products": [
-          {
-            "name": "Osem Bamba Peanut Snack KB | 25g",
-            "price": "$1.75",
-            "available": true
-          },
-          {
-            "name": "Osem Bamba Peanut Snack | 100g",
-            "price": "n/a",
-            "available": false
-          }
-        ]
-      },
-      {
-        "store": "Mirrabooka",
-        "timestamp": "2025-08-09T14:39:15.199097+08:00",
-        "available": true,
-        "products": [
-          {
-            "name": "Osem Bamba Peanut Snack KB | 25g",
-            "price": "$1.75",
-            "available": true
-          },
-          {
-            "name": "Osem Bamba Peanut Snack | 100g",
-            "price": "n/a",
-            "available": false
-          }
-        ]
-      }
-    ],
-    [
-      {
-        "store": "Dianella",
         "timestamp": "2025-08-09T15:25:01.857910+08:00",
         "available": true,
         "products": [
@@ -1162,6 +1126,42 @@
       {
         "store": "Mirrabooka",
         "timestamp": "2025-08-11T17:34:34.421736+08:00",
+        "available": true,
+        "products": [
+          {
+            "name": "Osem Bamba Peanut Snack KB | 25g",
+            "price": "$1.75",
+            "available": true
+          },
+          {
+            "name": "Osem Bamba Peanut Snack | 100g",
+            "price": "n/a",
+            "available": false
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "store": "Dianella",
+        "timestamp": "2025-08-11T18:32:07.868463+08:00",
+        "available": true,
+        "products": [
+          {
+            "name": "Osem Bamba Peanut Snack KB | 25g",
+            "price": "$1.75",
+            "available": true
+          },
+          {
+            "name": "Osem Bamba Peanut Snack | 100g",
+            "price": "n/a",
+            "available": false
+          }
+        ]
+      },
+      {
+        "store": "Mirrabooka",
+        "timestamp": "2025-08-11T18:32:31.017490+08:00",
         "available": true,
         "products": [
           {
