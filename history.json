@@ -3,42 +3,6 @@
     [
       {
         "store": "Dianella",
-        "timestamp": "2026-06-06T12:12:55.079973+08:00",
-        "available": false,
-        "products": [
-          {
-            "name": "Osem Bamba Peanut Snack KB | 25g",
-            "price": "$2.00",
-            "available": false
-          },
-          {
-            "name": "Osem Bamba Peanut Snack | 100g",
-            "price": "n/a",
-            "available": false
-          }
-        ]
-      },
-      {
-        "store": "Mirrabooka",
-        "timestamp": "2026-06-06T12:13:20.008953+08:00",
-        "available": false,
-        "products": [
-          {
-            "name": "Osem Bamba Peanut Snack KB | 25g",
-            "price": "$2.00",
-            "available": false
-          },
-          {
-            "name": "Osem Bamba Peanut Snack | 100g",
-            "price": "n/a",
-            "available": false
-          }
-        ]
-      }
-    ],
-    [
-      {
-        "store": "Dianella",
         "timestamp": "2026-06-06T15:50:37.103485+08:00",
         "available": false,
         "products": [
@@ -1043,6 +1007,77 @@
       {
         "store": "Mirrabooka",
         "timestamp": "2026-06-13T07:26:52.958463+08:00",
+        "available": false,
+        "products": [
+          {
+            "name": "Osem Bamba Peanut Snack KB | 25g",
+            "price": "$2.00",
+            "available": false
+          },
+          {
+            "name": "Osem Bamba Peanut Snack | 100g",
+            "price": "n/a",
+            "available": false
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "store": "Dianella",
+        "timestamp": "2026-06-13T12:40:44.659775+08:00",
+        "available": true,
+        "products": [
+          {
+            "name": "Osem Bamba Peanut Snack KB | 25g",
+            "price": "$2.00",
+            "available": false
+          },
+          {
+            "name": "Happy Snack Company Chickpeas Lightly Salted | 150g",
+            "price": "$6.00",
+            "available": true
+          },
+          {
+            "name": "Happy Snack Company Chickpeas Dark Choc & Raspberry 5x20g | 100g",
+            "price": "$6.00",
+            "available": true
+          },
+          {
+            "name": "Happy Snack Company Fava Beans Lightly Salted 6x25g | 150g",
+            "price": "$6.00",
+            "available": true
+          },
+          {
+            "name": "Tom & Luke Snackaballs Salted Caramel Pot | 224g",
+            "price": "$7.50",
+            "available": true
+          },
+          {
+            "name": "Health Lab Pistachio & Custard Double Filled Protein Balls 4x40g | 160g",
+            "price": "$12.00",
+            "available": true
+          },
+          {
+            "name": "Health Lab Peanut Butter Envy Nut-Butter Filled Balls 5X40g | 200g",
+            "price": "$12.75",
+            "available": true
+          },
+          {
+            "name": "Health Lab Chewy Choc Chip Peanut Butter Balls | 200GRAM",
+            "price": "$12.75",
+            "available": true
+          },
+          {
+            "name": "Osem Bamba Peanut Snack | 100g",
+            "price": "n/a",
+            "available": false
+          }
+        ]
+      },
+      {
+        "store": "Mirrabooka",
+        "timestamp": "2026-06-13T12:41:07.259868+08:00",
         "available": false,
         "products": [
           {
