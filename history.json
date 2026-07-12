@@ -3,77 +3,6 @@
     [
       {
         "store": "Dianella",
-        "timestamp": "2026-07-06T12:20:19.537712+08:00",
-        "available": false,
-        "products": [
-          {
-            "name": "Osem Bamba Peanut Snack KB | 25g",
-            "price": "$2.00",
-            "available": false
-          },
-          {
-            "name": "Osem Bamba Peanut Snack | 100g",
-            "price": "n/a",
-            "available": false
-          }
-        ]
-      },
-      {
-        "store": "Mirrabooka",
-        "timestamp": "2026-07-06T12:20:41.776427+08:00",
-        "available": true,
-        "products": [
-          {
-            "name": "Osem Bamba Peanut Snack KB | 25g",
-            "price": "$2.00",
-            "available": true
-          },
-          {
-            "name": "Happy Snack Company Chickpeas Lightly Salted | 150g",
-            "price": "$6.00",
-            "available": true
-          },
-          {
-            "name": "Happy Snack Company Chickpeas Dark Choc & Raspberry 5x20g | 100g",
-            "price": "$6.00",
-            "available": true
-          },
-          {
-            "name": "Happy Snack Company Fava Beans Lightly Salted 6x25g | 150g",
-            "price": "$6.00",
-            "available": true
-          },
-          {
-            "name": "Health Lab Pistachio & Rose Protein Supertreat | 55g",
-            "price": "$3.50",
-            "available": true
-          },
-          {
-            "name": "Health Lab Pistachio & Custard Double Filled Protein Balls 4x40g | 160g",
-            "price": "$9.90",
-            "available": true
-          },
-          {
-            "name": "Health Lab Peanut Butter Envy Nut-Butter Filled Balls 5X40g | 200g",
-            "price": "$9.90",
-            "available": true
-          },
-          {
-            "name": "Health Lab Chewy Choc Chip Peanut Butter Balls | 200GRAM",
-            "price": "$12.75",
-            "available": true
-          },
-          {
-            "name": "Osem Bamba Peanut Snack | 100g",
-            "price": "n/a",
-            "available": false
-          }
-        ]
-      }
-    ],
-    [
-      {
-        "store": "Dianella",
         "timestamp": "2026-07-06T17:06:33.896638+08:00",
         "available": false,
         "products": [
@@ -1165,6 +1094,42 @@
       {
         "store": "Mirrabooka",
         "timestamp": "2026-07-12T15:32:44.363059+08:00",
+        "available": false,
+        "products": [
+          {
+            "name": "Osem Bamba Peanut Snack KB | 25g",
+            "price": "$2.00",
+            "available": false
+          },
+          {
+            "name": "Osem Bamba Peanut Snack | 100g",
+            "price": "n/a",
+            "available": false
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "store": "Dianella",
+        "timestamp": "2026-07-12T17:58:46.710046+08:00",
+        "available": false,
+        "products": [
+          {
+            "name": "Osem Bamba Peanut Snack KB | 25g",
+            "price": "$2.00",
+            "available": false
+          },
+          {
+            "name": "Osem Bamba Peanut Snack | 100g",
+            "price": "n/a",
+            "available": false
+          }
+        ]
+      },
+      {
+        "store": "Mirrabooka",
+        "timestamp": "2026-07-12T17:59:10.138841+08:00",
         "available": false,
         "products": [
           {
