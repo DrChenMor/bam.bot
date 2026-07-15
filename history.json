@@ -3,77 +3,6 @@
     [
       {
         "store": "Dianella",
-        "timestamp": "2026-07-09T20:17:29.423350+08:00",
-        "available": false,
-        "products": [
-          {
-            "name": "Osem Bamba Peanut Snack KB | 25g",
-            "price": "$2.00",
-            "available": false
-          },
-          {
-            "name": "Osem Bamba Peanut Snack | 100g",
-            "price": "n/a",
-            "available": false
-          }
-        ]
-      },
-      {
-        "store": "Mirrabooka",
-        "timestamp": "2026-07-09T20:17:52.445433+08:00",
-        "available": true,
-        "products": [
-          {
-            "name": "Osem Bamba Peanut Snack KB | 25g",
-            "price": "$2.00",
-            "available": false
-          },
-          {
-            "name": "Happy Snack Company Chickpeas Lightly Salted | 150g",
-            "price": "$6.00",
-            "available": true
-          },
-          {
-            "name": "Happy Snack Company Chickpeas Dark Choc & Raspberry 5x20g | 100g",
-            "price": "$6.00",
-            "available": true
-          },
-          {
-            "name": "Happy Snack Company Fava Beans Lightly Salted 6x25g | 150g",
-            "price": "$6.00",
-            "available": true
-          },
-          {
-            "name": "Health Lab Pistachio & Rose Protein Supertreat | 55g",
-            "price": "$4.50",
-            "available": true
-          },
-          {
-            "name": "Health Lab Pistachio & Custard Double Filled Protein Balls 4x40g | 160g",
-            "price": "$12.00",
-            "available": true
-          },
-          {
-            "name": "Health Lab Peanut Butter Envy Nut-Butter Filled Balls 5X40g | 200g",
-            "price": "$12.75",
-            "available": true
-          },
-          {
-            "name": "Health Lab Chewy Choc Chip Peanut Butter Balls | 200g",
-            "price": "$12.75",
-            "available": true
-          },
-          {
-            "name": "Osem Bamba Peanut Snack | 100g",
-            "price": "n/a",
-            "available": false
-          }
-        ]
-      }
-    ],
-    [
-      {
-        "store": "Dianella",
         "timestamp": "2026-07-10T08:13:18.621381+08:00",
         "available": false,
         "products": [
@@ -1100,6 +1029,77 @@
       {
         "store": "Mirrabooka",
         "timestamp": "2026-07-15T11:24:48.956415+08:00",
+        "available": false,
+        "products": [
+          {
+            "name": "Osem Bamba Peanut Snack KB | 25g",
+            "price": "$2.00",
+            "available": false
+          },
+          {
+            "name": "Osem Bamba Peanut Snack | 100g",
+            "price": "n/a",
+            "available": false
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "store": "Dianella",
+        "timestamp": "2026-07-15T14:22:53.612631+08:00",
+        "available": true,
+        "products": [
+          {
+            "name": "Osem Bamba Peanut Snack KB | 25g",
+            "price": "$2.00",
+            "available": false
+          },
+          {
+            "name": "Happy Snack Company Chickpeas Lightly Salted | 150g",
+            "price": "$6.00",
+            "available": true
+          },
+          {
+            "name": "Happy Snack Company Chickpeas Dark Choc & Raspberry 5x20g | 100g",
+            "price": "$6.00",
+            "available": true
+          },
+          {
+            "name": "Happy Snack Company Fava Beans Lightly Salted 6x25g | 150g",
+            "price": "$6.00",
+            "available": true
+          },
+          {
+            "name": "Health Lab Pistachio & Rose Protein Supertreat | 55g",
+            "price": "$4.50",
+            "available": true
+          },
+          {
+            "name": "Health Lab Pistachio & Custard Double Filled Protein Balls 4x40g | 160g",
+            "price": "$12.00",
+            "available": true
+          },
+          {
+            "name": "Health Lab Peanut Butter Envy Nut-butter Filled Balls 5x40g | 200g",
+            "price": "$12.75",
+            "available": true
+          },
+          {
+            "name": "Health Lab Chewy Choc Chip Peanut Butter Balls | 200g",
+            "price": "$12.75",
+            "available": true
+          },
+          {
+            "name": "Osem Bamba Peanut Snack | 100g",
+            "price": "n/a",
+            "available": false
+          }
+        ]
+      },
+      {
+        "store": "Mirrabooka",
+        "timestamp": "2026-07-15T14:23:14.857569+08:00",
         "available": false,
         "products": [
           {
