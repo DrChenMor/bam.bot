@@ -3,20 +3,6 @@
     [
       {
         "store": "Dianella",
-        "timestamp": "2026-08-16T18:31:06.933180+08:00",
-        "available": false,
-        "products": []
-      },
-      {
-        "store": "Mirrabooka",
-        "timestamp": "2026-08-16T18:31:21.433993+08:00",
-        "available": false,
-        "products": []
-      }
-    ],
-    [
-      {
-        "store": "Dianella",
         "timestamp": "2026-08-16T19:26:47.370823+08:00",
         "available": false,
         "products": [
@@ -1043,6 +1029,42 @@
       {
         "store": "Mirrabooka",
         "timestamp": "2026-08-18T21:00:03.051346+08:00",
+        "available": true,
+        "products": [
+          {
+            "name": "Osem Bamba Peanut Snack KB | 25g",
+            "price": "$2.00",
+            "available": true
+          },
+          {
+            "name": "Osem Bamba Peanut Snack | 100g",
+            "price": "n/a",
+            "available": false
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "store": "Dianella",
+        "timestamp": "2026-08-18T21:51:45.244421+08:00",
+        "available": false,
+        "products": [
+          {
+            "name": "Osem Bamba Peanut Snack KB | 25g",
+            "price": "$2.00",
+            "available": false
+          },
+          {
+            "name": "Osem Bamba Peanut Snack | 100g",
+            "price": "n/a",
+            "available": false
+          }
+        ]
+      },
+      {
+        "store": "Mirrabooka",
+        "timestamp": "2026-08-18T21:52:05.376343+08:00",
         "available": true,
         "products": [
           {
