@@ -3,47 +3,6 @@
     [
       {
         "store": "Dianella",
-        "timestamp": "2026-10-16T20:19:03.339744+08:00",
-        "available": true,
-        "products": [
-          {
-            "name": "Osem Bamba Peanut Snack | 100g",
-            "price": "$4.00",
-            "available": true
-          },
-          {
-            "name": "Osem Bamba Peanut Snack KB | 25g",
-            "price": "$2.00",
-            "available": true
-          },
-          {
-            "name": "Osem Bamba Snacks Hazelnut Filling | 60g",
-            "price": "$4.50",
-            "available": false
-          }
-        ]
-      },
-      {
-        "store": "Mirrabooka",
-        "timestamp": "2026-10-16T20:19:27.699479+08:00",
-        "available": true,
-        "products": [
-          {
-            "name": "Osem Bamba Peanut Snack | 100g",
-            "price": "$4.00",
-            "available": true
-          },
-          {
-            "name": "Osem Bamba Peanut Snack KB | 25g",
-            "price": "$2.00",
-            "available": true
-          }
-        ]
-      }
-    ],
-    [
-      {
-        "store": "Dianella",
         "timestamp": "2026-10-17T07:25:59.261901+08:00",
         "available": true,
         "products": [
@@ -1215,6 +1174,47 @@
       {
         "store": "Mirrabooka",
         "timestamp": "2026-10-25T12:24:50.610579+08:00",
+        "available": true,
+        "products": [
+          {
+            "name": "Osem Bamba Peanut Snack | 100g",
+            "price": "$4.00",
+            "available": true
+          },
+          {
+            "name": "Osem Bamba Peanut Snack KB | 25g",
+            "price": "$2.00",
+            "available": true
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "store": "Dianella",
+        "timestamp": "2026-10-25T17:42:57.162330+08:00",
+        "available": true,
+        "products": [
+          {
+            "name": "Osem Bamba Peanut Snack | 100g",
+            "price": "$4.00",
+            "available": false
+          },
+          {
+            "name": "Osem Bamba Peanut Snack KB | 25g",
+            "price": "$2.00",
+            "available": true
+          },
+          {
+            "name": "Osem Bamba Snacks Hazelnut Filling | 60g",
+            "price": "$4.50",
+            "available": true
+          }
+        ]
+      },
+      {
+        "store": "Mirrabooka",
+        "timestamp": "2026-10-25T17:43:18.911092+08:00",
         "available": true,
         "products": [
           {
